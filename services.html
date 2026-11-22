@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SERVICES // MODERN WEB DESIGN & DIGITAL SOLUTIONS</title>
+  <style>
+    :root {
+      --bg-dark: #020307;
+      --bg-surface: #070b14;
+      --card-bg: rgba(6, 9, 18, 0.78);
+      --border-sheen: rgba(0, 240, 255, 0.2);
+      
+      --accent-cyan: #00f0ff;
+      --accent-amber: #ffb703;
+      --accent-magenta: #ff0055;
+      --accent-green: #00ff88;
+      --accent-gold: #e5c07b;
+      --accent-teal: #00e5c9;
+      --accent-orange: #ff7700;
+      
+      --text-main: #f3f6fc;
+      --text-muted: #8b9bb4;
+      --text-dim: #445065;
+      
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      cursor: none;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient CRT Scanline Overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.5;
+    }
+
+    /* Background Ambient Canvas Grid */
+    #ambient-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Interactive Luxury HUD Cursor */
+    #cursor-reticle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent-cyan);
+      border-radius: 50%;
+      pointer-events: none !important;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s, opacity 0.3s, background-color 0.2s;
+      mix-blend-mode: difference;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+
+    #cursor-reticle.active { opacity: 1; }
+    #cursor-reticle.hover-link {
+      width: 52px;
+      height: 52px;
+      border-color: var(--accent-teal);
+      background-color: rgba(0, 240, 255, 0.12);
+    }
+
+    #cursor-dot {
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    #cursor-coords {
+      position: absolute;
+      left: 45px;
+      top: -5px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--accent-cyan);
+      white-space: nowrap;
+    }
+
+    /* ====================================================
+       PERSISTENT TOP NAVIGATION BAR
+       ==================================================== */
+    .persistent-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 950;
+      background: rgba(4, 7, 14, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+
+    .persistent-navbar::before {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+    }
+
+    .nav-logo-icon {
+      color: var(--accent-cyan);
+      font-size: 15px;
+    }
+
+    .nav-status-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent-green);
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 4px;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link span {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      border-color: rgba(0, 240, 255, 0.3);
+      background: rgba(0, 240, 255, 0.06);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+    }
+
+    .nav-link.active {
+      color: var(--accent-cyan);
+      border-color: rgba(0, 240, 255, 0.4);
+      background: rgba(0, 240, 255, 0.08);
+    }
+
+    .nav-link-teal {
+      color: var(--accent-teal);
+      border-color: rgba(0, 229, 201, 0.25);
+      background: rgba(0, 229, 201, 0.05);
+    }
+
+    .nav-link-teal:hover {
+      color: #fff;
+      border-color: var(--accent-teal);
+      background: rgba(0, 229, 201, 0.15);
+      box-shadow: 0 0 15px rgba(0, 229, 201, 0.3);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Page Container */
+    .page-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 130px 32px 100px 32px;
+    }
+
+    /* ====================================================
+       HERO SECTION & GATEWAY FUNNEL HUB
+       ==================================================== */
+    .hero-section {
+      padding: 30px 0 60px 0;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+      margin-bottom: 60px;
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding: 4px 12px;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-size: clamp(34px, 5vw, 68px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      margin-bottom: 18px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lead {
+      font-size: clamp(15px, 1.6vw, 19px);
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      max-width: 820px;
+    }
+
+    /* Platform Flexibility Banner */
+    .platform-flexibility-box {
+      background: rgba(0, 240, 255, 0.03);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+
+    .platform-flex-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent-gold);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .platform-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .platform-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-main);
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .platform-chip:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.1);
+      color: #fff;
+    }
+
+    .hero-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stat-item {
+      font-family: var(--font-mono);
+    }
+
+    .stat-num {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+    }
+
+    .stat-num span {
+      font-size: 13px;
+      color: var(--accent-cyan);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Right Column: Two Primary Gateway Funnels */
+    .hero-funnels-hub {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .funnel-card {
+      padding: 28px 26px;
+      border-radius: 18px;
+      backdrop-filter: blur(20px);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .funnel-card-teal {
+      background: linear-gradient(145deg, rgba(0, 36, 32, 0.85), rgba(6, 16, 22, 0.95));
+      border: 1px solid rgba(0, 229, 201, 0.35);
+    }
+
+    .funnel-card-teal:hover {
+      border-color: var(--accent-teal);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0, 229, 201, 0.3);
+    }
+
+    .funnel-card-orange {
+      background: linear-gradient(145deg, rgba(46, 18, 0, 0.85), rgba(18, 10, 8, 0.95));
+      border: 1px solid rgba(255, 119, 0, 0.35);
+    }
+
+    .funnel-card-orange:hover {
+      border-color: var(--accent-orange);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(255, 119, 0, 0.3);
+    }
+
+    .funnel-top-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .funnel-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .funnel-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .funnel-desc {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .funnel-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 700;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 40px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-title {
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: "//";
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-size: 20px;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.18em;
+    }
+
+    /* ====================================================
+       CORE SERVICES PILLARS (NO MOUSE-TILT - NEON ILLUMINATION ON HOVER)
+       ==================================================== */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-bottom: 100px;
+    }
+
+    /* Base Service Card: Flat, Rock-Solid, No Skew or Mouse Pull */
+    .service-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transform: none !important; /* No mouse-drawing skew or tilt */
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px) !important;
+    }
+
+    .service-card::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 40px;
+      right: 40px;
+      height: 1px;
+      transition: opacity 0.3s;
+    }
+
+    /* --- Neon Variant 01: Cyan Illumination --- */
+    .service-card-cyan {
+      border: 1px solid rgba(0, 240, 255, 0.2);
+    }
+    .service-card-cyan::before {
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    }
+    .service-card-cyan:hover {
+      border-color: var(--accent-cyan);
+      background: linear-gradient(145deg, rgba(0, 36, 45, 0.85), rgba(6, 12, 22, 0.95));
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.25), inset 0 0 25px rgba(0, 240, 255, 0.08);
+    }
+    .service-card-cyan:hover .service-name {
+      color: var(--accent-cyan);
+    }
+
+    /* --- Neon Variant 02: Magenta Illumination --- */
+    .service-card-magenta {
+      border: 1px solid rgba(255, 0, 85, 0.2);
+    }
+    .service-card-magenta::before {
+      background: linear-gradient(90deg, transparent, var(--accent-magenta), transparent);
+    }
+    .service-card-magenta:hover {
+      border-color: var(--accent-magenta);
+      background: linear-gradient(145deg, rgba(46, 0, 20, 0.85), rgba(16, 6, 12, 0.95));
+      box-shadow: 0 0 35px rgba(255, 0, 85, 0.25), inset 0 0 25px rgba(255, 0, 85, 0.08);
+    }
+    .service-card-magenta:hover .service-name {
+      color: var(--accent-magenta);
+    }
+
+    /* --- Neon Variant 03: Amber Illumination --- */
+    .service-card-amber {
+      border: 1px solid rgba(255, 183, 3, 0.2);
+    }
+    .service-card-amber::before {
+      background: linear-gradient(90deg, transparent, var(--accent-amber), transparent);
+    }
+    .service-card-amber:hover {
+      border-color: var(--accent-amber);
+      background: linear-gradient(145deg, rgba(46, 28, 0, 0.85), rgba(18, 12, 6, 0.95));
+      box-shadow: 0 0 35px rgba(255, 183, 3, 0.25), inset 0 0 25px rgba(255, 183, 3, 0.08);
+    }
+    .service-card-amber:hover .service-name {
+      color: var(--accent-amber);
+    }
+
+    /* --- Neon Variant 04: Green Illumination --- */
+    .service-card-green {
+      border: 1px solid rgba(0, 255, 136, 0.2);
+    }
+    .service-card-green::before {
+      background: linear-gradient(90deg, transparent, var(--accent-green), transparent);
+    }
+    .service-card-green:hover {
+      border-color: var(--accent-green);
+      background: linear-gradient(145deg, rgba(0, 42, 22, 0.85), rgba(6, 18, 12, 0.95));
+      box-shadow: 0 0 35px rgba(0, 255, 136, 0.25), inset 0 0 25px rgba(0, 255, 136, 0.08);
+    }
+    .service-card-green:hover .service-name {
+      color: var(--accent-green);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .service-index {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .vector-hud-container {
+      width: 105px;
+      height: 105px;
+      min-width: 105px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      padding: 10px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .hud-cyan {
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(6, 12, 22, 0.7) 70%);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .service-card:hover .hud-cyan {
+      transform: scale(1.08);
+      border-color: var(--accent-cyan);
+      box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.25), 0 15px 40px rgba(0, 240, 255, 0.35);
+    }
+
+    .hud-magenta {
+      background: radial-gradient(circle, rgba(255, 0, 85, 0.12) 0%, rgba(18, 6, 12, 0.7) 70%);
+      border: 1px solid rgba(255, 0, 85, 0.3);
+      box-shadow: inset 0 0 20px rgba(255, 0, 85, 0.1), 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .service-card:hover .hud-magenta {
+      transform: scale(1.08);
+      border-color: var(--accent-magenta);
+      box-shadow: inset 0 0 30px rgba(255, 0, 85, 0.25), 0 15px 40px rgba(255, 0, 85, 0.35);
+    }
+
+    .hud-amber {
+      background: radial-gradient(circle, rgba(255, 183, 3, 0.12) 0%, rgba(20, 14, 6, 0.7) 70%);
+      border: 1px solid rgba(255, 183, 3, 0.3);
+      box-shadow: inset 0 0 20px rgba(255, 183, 3, 0.1), 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .service-card:hover .hud-amber {
+      transform: scale(1.08);
+      border-color: var(--accent-amber);
+      box-shadow: inset 0 0 30px rgba(255, 183, 3, 0.25), 0 15px 40px rgba(255, 183, 3, 0.35);
+    }
+
+    .hud-green {
+      background: radial-gradient(circle, rgba(0, 255, 136, 0.12) 0%, rgba(6, 18, 12, 0.7) 70%);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.1), 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .service-card:hover .hud-green {
+      transform: scale(1.08);
+      border-color: var(--accent-green);
+      box-shadow: inset 0 0 30px rgba(0, 255, 136, 0.25), 0 15px 40px rgba(0, 255, 136, 0.35);
+    }
+
+    .vector-hud-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .service-name {
+      font-size: clamp(22px, 2.3vw, 30px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 12px;
+      transition: color 0.25s;
+    }
+
+    .service-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: auto;
+    }
+
+    .feature-item {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-item::before {
+      content: "◆";
+      color: var(--accent-cyan);
+      font-size: 8px;
+    }
+
+    /* Orbital SVG Keyframes */
+    @keyframes orbit-spin-cw { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes orbit-spin-ccw { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+    @keyframes core-pulse { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.15); opacity: 1; } }
+    @keyframes signal-ping { 0% { r: 12px; opacity: 1; } 100% { r: 125px; opacity: 0; } }
+
+    .orbit-cw { animation: orbit-spin-cw 20s linear infinite; transform-origin: 150px 150px; }
+    .orbit-ccw { animation: orbit-spin-ccw 26s linear infinite; transform-origin: 150px 150px; }
+    .pulse-node { animation: core-pulse 2.5s ease-in-out infinite; transform-origin: 150px 150px; }
+    .ping-wave { animation: signal-ping 3s cubic-bezier(0, 0.2, 0.8, 1) infinite; transform-origin: 150px 150px; }
+
+    /* ====================================================
+       ENGINEERING PROCESS (STEPPER)
+       ==================================================== */
+    .process-section {
+      margin-bottom: 100px;
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .process-step {
+      background: rgba(6, 9, 18, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 28px 24px;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .process-step:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 9, 18, 0.85);
+      transform: translateY(-4px);
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ====================================================
+       ENGAGEMENT TIERS & CTA DECK
+       ==================================================== */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 100px;
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 36px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--accent-teal);
+      background: linear-gradient(145deg, rgba(0, 36, 32, 0.85), rgba(6, 16, 22, 0.95));
+      box-shadow: 0 20px 60px rgba(0, 229, 201, 0.18);
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8);
+    }
+
+    .pricing-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--accent-teal);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .pricing-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .pricing-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .pricing-deliverables {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .pricing-deliverables li {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-deliverables li::before {
+      content: "›";
+      color: var(--accent-cyan);
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.25s ease;
+      cursor: pointer !important;
+    }
+
+    .btn-action-primary {
+      background: var(--accent-cyan);
+      color: #000;
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-action-primary:hover {
+      background: #fff;
+      border-color: #fff;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+    }
+
+    .btn-action-teal {
+      background: var(--accent-teal);
+      color: #000;
+      border: 1px solid var(--accent-teal);
+      box-shadow: 0 0 20px rgba(0, 229, 201, 0.3);
+    }
+
+    .btn-action-teal:hover {
+      background: #fff;
+      border-color: #fff;
+      box-shadow: 0 0 30px rgba(0, 229, 201, 0.6);
+    }
+
+    .btn-action-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-action-outline:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      color: var(--accent-cyan);
+    }
+
+    /* Terminal Inquiry Console */
+    .inquiry-console {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sheen);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
+      margin-bottom: 80px;
+    }
+
+    .console-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-cyan);
+    }
+
+    .console-body {
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    /* Footer */
+    .page-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+    }
+
+    .footer-brand { color: #fff; font-weight: 700; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 14px; }
+    .footer-links a, .footer-contact a { color: var(--accent-cyan); text-decoration: none; }
+    .footer-links a:hover, .footer-contact a:hover { color: #fff; }
+    .footer-contact { text-align: right; line-height: 1.8; }
+
+    @media (max-width: 992px) {
+      .hero-section { grid-template-columns: 1fr; gap: 32px; }
+      .hero-funnels-hub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .services-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .console-body { grid-template-columns: 1fr; }
+      .persistent-navbar { height: auto; min-height: 64px; padding: 10px 20px; flex-wrap: wrap; gap: 8px; }
+      .nav-center { display: flex; order: 3; flex: 1 0 100%; justify-content: center; flex-wrap: wrap; gap: 2px; }
+      .nav-link { padding: 5px 8px; }
+    }
+
+    @media (max-width: 640px) {
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 32px;
+      }
+      .section-title {
+        display: block;
+        font-size: clamp(20px, 5.3vw, 24px);
+        line-height: 1.2;
+      }
+      .section-title::before {
+        display: inline-block;
+        margin-right: 8px;
+        font-size: 13px;
+        vertical-align: middle;
+      }
+      .section-tag {
+        font-size: 8px;
+        line-height: 1.5;
+        letter-spacing: 0.12em;
+      }
+      .process-grid { grid-template-columns: 1fr; }
+      .hero-stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .hero-funnels-hub { grid-template-columns: 1fr; }
+      .page-footer { grid-template-columns: 1fr; gap: 12px; text-align: center; }
+      .footer-links {
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+        font-size: 9px;
+        letter-spacing: 0.06em;
+      }
+      .footer-contact { text-align: center; }
+      .nav-right { display: none; }
+      .feature-list { grid-template-columns: 1fr; }
+      .card-top { flex-direction: column-reverse; align-items: flex-start; }
+      .vector-hud-container { width: 90px; height: 90px; min-width: 90px; }
+      #cursor-reticle { display: none; }
+      * { cursor: auto; }
+    }
+  </style>
+  <link rel="stylesheet" href="hero-particles.css">
+  <link rel="stylesheet" href="site-header.css">
+  <script src="site-header.js" defer></script>
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Interactive Precision Cursor -->
+  <div id="cursor-reticle">
+    <div id="cursor-dot"></div>
+    <div id="cursor-coords">X:0000 Y:0000</div>
+  </div>
+
+  <!-- Persistent Aerospace Navbar -->
+  <header class="persistent-navbar">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo interactive-link">
+        <img class="nav-logo-image" src="rhetorical-designs-logo.png" alt="Rhetorical Designs">
+      </a>
+    </div>
+
+    <button class="mobile-menu-toggle" type="button" data-mobile-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-center" id="primary-navigation" aria-label="Main navigation">
+      <a href="services.html" class="nav-link active interactive-link"><span>01</span>SERVICES</a>
+      <a href="portfolio.html" class="nav-link interactive-link"><span>02</span>PORTFOLIO</a>
+      <a href="about.html" class="nav-link interactive-link"><span>03</span>ABOUT</a>
+      <a href="contact.html" class="nav-link interactive-link"><span>04</span>CONTACT</a>
+    </nav>
+
+    <div class="nav-right">
+      <a class="whatsapp-cta interactive-link" href="https://wa.me/27632280179" aria-label="Chat with Rhetorical Designs on WhatsApp">
+        <span class="whatsapp-cta-mark" aria-hidden="true">WA</span>
+        <span>WHATSAPP</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="page-container">
+
+    <!-- ====================================================
+         HERO SECTION (BUSINESS VALUE // 2 FUNNELS)
+         ==================================================== -->
+    <section class="hero-section hero-particle-surface">
+      <canvas class="hero-particles" data-hero-particles aria-hidden="true"></canvas>
+      
+      <!-- Left Column: Business Value, Heading & Platform Versatility -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">// RHETORICAL DESIGNS // SERVICES & CAPABILITIES</div>
+        <h1 class="hero-title">
+          DESIGN THAT THINKS. WEBSITES THAT <span>PERFORM.</span>
+        </h1>
+        <p class="hero-lead">
+          I bring brand thinking, art direction and creative engineering together to build expressive digital experiences with clarity, speed and purpose. From bespoke websites and e-commerce to interactive 3D and useful AI automations, every detail has a reason to be there.
+        </p>
+
+        <!-- Prominent Platform Versatility Callout -->
+        <div class="platform-flexibility-box">
+          <span class="platform-flex-label">// PLATFORMS, AI & AUTOMATION:</span>
+          <div class="platform-chips">
+            <span class="platform-chip">Shopify</span>
+            <span class="platform-chip">Webflow</span>
+            <span class="platform-chip">Framer</span>
+            <span class="platform-chip">WordPress / WooCommerce</span>
+            <span class="platform-chip">Squarespace</span>
+            <span class="platform-chip">Wix Studio</span>
+            <span class="platform-chip">Vercel (React / Next.js)</span>
+            <span class="platform-chip">Custom Code</span>
+            <span class="platform-chip">AI Assistants</span>
+            <span class="platform-chip">LLM Integrations</span>
+            <span class="platform-chip">Workflow Automation</span>
+          </div>
+        </div>
+
+        <div class="hero-stats-bar">
+          <div class="stat-item">
+            <div class="stat-num">FAST</div>
+            <div class="stat-label">Performance-minded builds</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">ALL</div>
+            <div class="stat-label">Screens & devices considered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">LEAN</div>
+            <div class="stat-label">Purposeful, uncluttered design</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">READY</div>
+            <div class="stat-label">Built to grow with your brand</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Two Primary Gateway Funnels (Client & Agency Hub) -->
+      <div class="hero-funnels-hub">
+        
+        <!-- Funnel 01: Client Portal Gateway -->
+        <a href="contact.html#client-contact" class="funnel-card funnel-card-teal interactive-link">
+          <div>
+            <div class="funnel-top-meta">
+              <span class="funnel-badge" style="color: var(--accent-teal);">// BUSINESS OWNERS & BRANDS</span>
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-teal);">[ CLIENTS ]</span>
+            </div>
+            <h3 class="funnel-title">Direct Client Projects</h3>
+            <p class="funnel-desc">
+              For business owners, entrepreneurs, and brands looking for a new website, online store, interactive 3D feature, or AI automation.
+            </p>
+          </div>
+          <div class="funnel-footer" style="color: var(--accent-teal);">
+            <span>EXPLORE CLIENT WORK & CASES</span>
+            <span>↗</span>
+          </div>
+        </a>
+
+        <!-- Funnel 02: Agency Partner Gateway -->
+        <a href="contact.html#agency-contact" class="funnel-card funnel-card-orange interactive-link">
+          <div>
+            <div class="funnel-top-meta">
+              <span class="funnel-badge" style="color: var(--accent-orange);">// AGENCIES & STUDIOS</span>
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-orange);">[ PARTNERS ]</span>
+            </div>
+            <h3 class="funnel-title">Agency White-Label Partner</h3>
+            <p class="funnel-desc">
+              For digital agencies and design studios needing specialized white-label creative coding, 48-hour pitch prototypes, and complex shader development.
+            </p>
+          </div>
+          <div class="funnel-footer" style="color: var(--accent-orange);">
+            <span>ENTER AGENCY NETWORK</span>
+            <span>↗</span>
+          </div>
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         CORE SERVICES (2x2 GRID - NEON ILLUMINATION ON HOVER)
+         ==================================================== -->
+    <section id="pillars" style="margin-bottom: 100px;">
+      <div class="section-header">
+        <h2 class="section-title">What We Do</h2>
+        <span class="section-tag">[ CORE SERVICES // 04 PILLARS ]</span>
+      </div>
+
+      <div class="services-grid">
+
+        <!-- Pillar 01: Custom Web Design & Development (Cyan Neon on Hover) -->
+        <div class="service-card service-card-cyan">
+          <div>
+            <div class="card-top">
+              <div>
+                <span class="service-index">// SERVICE 01 // WEB DESIGN & DEV</span>
+                <h3 class="service-name">Fast, Custom Websites</h3>
+              </div>
+
+              <!-- Glowing HUD Chassis (Cyan) -->
+              <div class="vector-hud-container hud-cyan">
+                <svg class="vector-hud-svg" viewBox="0 0 300 300">
+                  <circle class="ping-wave" cx="150" cy="150" r="20" fill="none" stroke="var(--accent-cyan)" stroke-width="2"/>
+                  <circle cx="150" cy="150" r="130" fill="none" stroke="rgba(0, 240, 255, 0.18)" stroke-width="2"/>
+                  <circle cx="150" cy="150" r="95" fill="none" stroke="rgba(0, 240, 255, 0.25)" stroke-width="1.5" stroke-dasharray="6 6"/>
+                  <g class="orbit-cw">
+                    <ellipse cx="150" cy="150" rx="125" ry="48" fill="none" stroke="var(--accent-cyan)" stroke-width="2.5" transform="rotate(-30 150 150)"/>
+                    <g transform="rotate(-30 150 150)">
+                      <circle cx="275" cy="150" r="7" fill="var(--accent-cyan)"/>
+                      <circle cx="275" cy="150" r="14" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5"/>
+                    </g>
+                  </g>
+                  <g class="pulse-node">
+                    <circle cx="150" cy="150" r="26" fill="rgba(0, 240, 255, 0.2)" stroke="var(--accent-cyan)" stroke-width="2.5"/>
+                    <circle cx="150" cy="150" r="10" fill="#fff"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p class="service-desc">
+              We build clean, beautiful, lightning-fast websites that make a memorable first impression. Whether on Shopify, Webflow, Framer, WordPress, or custom code, your site will load instantly and be easy for your team to manage.
+            </p>
+          </div>
+          <div class="feature-list">
+            <div class="feature-item">Any Platform (Shopify, Webflow, etc.)</div>
+            <div class="feature-item">Loads Under 1 Second</div>
+            <div class="feature-item">Mobile-First Design</div>
+            <div class="feature-item">Built-In Google SEO Setup</div>
+          </div>
+        </div>
+
+        <!-- Pillar 02: Interactive & 3D Experiences (Magenta Neon on Hover) -->
+        <div class="service-card service-card-magenta">
+          <div>
+            <div class="card-top">
+              <div>
+                <span class="service-index" style="color: var(--accent-magenta);">// SERVICE 02 // VISUAL WOW FACTOR</span>
+                <h3 class="service-name">Interactive & 3D Visuals</h3>
+              </div>
+
+              <!-- Glowing HUD Chassis (Magenta) -->
+              <div class="vector-hud-container hud-magenta">
+                <svg class="vector-hud-svg" viewBox="0 0 300 300">
+                  <g class="orbit-cw">
+                    <circle cx="150" cy="150" r="130" fill="none" stroke="var(--accent-magenta)" stroke-width="3" stroke-dasharray="12 30 40 20"/>
+                  </g>
+                  <g class="orbit-ccw">
+                    <ellipse cx="150" cy="150" rx="120" ry="52" fill="none" stroke="var(--accent-cyan)" stroke-width="2" transform="rotate(-60 150 150)"/>
+                    <g transform="rotate(-60 150 150)">
+                      <circle cx="270" cy="150" r="8" fill="var(--accent-magenta)"/>
+                      <circle cx="270" cy="150" r="15" fill="none" stroke="var(--accent-magenta)" stroke-width="1.5"/>
+                    </g>
+                  </g>
+                  <circle cx="150" cy="150" r="85" fill="none" stroke="rgba(255, 0, 85, 0.25)" stroke-width="1.5"/>
+                  <g class="pulse-node">
+                    <circle cx="150" cy="150" r="22" fill="rgba(255, 0, 85, 0.2)" stroke="var(--accent-magenta)" stroke-width="2.5"/>
+                    <circle cx="150" cy="150" r="7" fill="#fff"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p class="service-desc">
+              Make your products and brand unforgettable. We create smooth animations, interactive 3D product previews, and visual features that keep visitors engaged and make your business stand out from competitors.
+            </p>
+          </div>
+          <div class="feature-list">
+            <div class="feature-item">Smooth Scroll Animations</div>
+            <div class="feature-item">3D Product Visualizers</div>
+            <div class="feature-item">Virtual Try-On / Fitting Tools</div>
+            <div class="feature-item">Engaging Interactive Features</div>
+          </div>
+        </div>
+
+        <!-- Pillar 03: Smart AI & Business Automations (Amber Neon on Hover) -->
+        <div class="service-card service-card-amber">
+          <div>
+            <div class="card-top">
+              <div>
+                <span class="service-index" style="color: var(--accent-amber);">// SERVICE 03 // TIME-SAVING TECH</span>
+                <h3 class="service-name">Smart AI & Automations</h3>
+              </div>
+
+              <!-- Glowing HUD Chassis (Amber) -->
+              <div class="vector-hud-container hud-amber">
+                <svg class="vector-hud-svg" viewBox="0 0 300 300">
+                  <g class="orbit-cw">
+                    <ellipse cx="150" cy="150" rx="125" ry="42" fill="none" stroke="var(--accent-amber)" stroke-width="2.5" transform="rotate(15 150 150)"/>
+                    <g transform="rotate(15 150 150)"><circle cx="275" cy="150" r="7" fill="var(--accent-amber)"/></g>
+                  </g>
+                  <g class="orbit-ccw">
+                    <ellipse cx="150" cy="150" rx="125" ry="42" fill="none" stroke="var(--accent-green)" stroke-width="2" transform="rotate(-75 150 150)"/>
+                    <g transform="rotate(-75 150 150)"><circle cx="275" cy="150" r="7" fill="var(--accent-green)"/></g>
+                  </g>
+                  <g class="pulse-node">
+                    <polygon points="150,120 175,168 125,168" fill="rgba(255, 183, 3, 0.25)" stroke="var(--accent-amber)" stroke-width="2.5"/>
+                    <circle cx="150" cy="152" r="6" fill="#fff"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p class="service-desc">
+              Save hours of manual work every week. We build custom AI assistants, automated customer intake forms, content generators, and smart workflow tools that run your repetitive tasks in the background.
+            </p>
+          </div>
+          <div class="feature-list">
+            <div class="feature-item">Automated Customer Intake</div>
+            <div class="feature-item">Smart AI Chat & Assistants</div>
+            <div class="feature-item">Content & Copy Generators</div>
+            <div class="feature-item">Custom Business Tools</div>
+          </div>
+        </div>
+
+        <!-- Pillar 04: Fast Hosting & Tech Maintenance (Green Neon on Hover) -->
+        <div class="service-card service-card-green">
+          <div>
+            <div class="card-top">
+              <div>
+                <span class="service-index" style="color: var(--accent-green);">// SERVICE 04 // SPEED & SECURITY</span>
+                <h3 class="service-name">Fast Hosting & Support</h3>
+              </div>
+
+              <!-- Glowing HUD Chassis (Green) -->
+              <div class="vector-hud-container hud-green">
+                <svg class="vector-hud-svg" viewBox="0 0 300 300">
+                  <g class="orbit-cw">
+                    <circle cx="150" cy="150" r="135" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-dasharray="24 12 6 12"/>
+                    <circle cx="285" cy="150" r="6" fill="var(--accent-green)"/>
+                  </g>
+                  <g class="orbit-ccw">
+                    <ellipse cx="150" cy="150" rx="100" ry="100" fill="none" stroke="rgba(0, 255, 136, 0.3)" stroke-width="1.5"/>
+                    <circle cx="150" cy="50" r="6" fill="var(--accent-green)"/>
+                  </g>
+                  <g class="pulse-node">
+                    <rect x="126" y="126" width="48" height="48" fill="rgba(0, 255, 136, 0.16)" stroke="var(--accent-green)" stroke-width="2.5"/>
+                    <circle cx="150" cy="150" r="7" fill="#fff"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p class="service-desc">
+              Never worry about your website going down or running slow. We handle domain setup, security certificates (SSL), automated backups, fast cloud hosting, and continuous maintenance so your site stays reliable.
+            </p>
+          </div>
+          <div class="feature-list">
+            <div class="feature-item">Secure SSL & Domain Setup</div>
+            <div class="feature-item">Fast Global Cloud Hosting</div>
+            <div class="feature-item">Automated Backups</div>
+            <div class="feature-item">Ongoing Maintenance & Edits</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         HOW WE WORK (SIMPLE 4-STEP PROCESS)
+         ==================================================== -->
+    <section id="process" class="process-section">
+      <div class="section-header">
+        <h2 class="section-title">How We Work</h2>
+        <span class="section-tag">[ PROCESS // 4 SIMPLE STEPS ]</span>
+      </div>
+
+      <div class="process-grid">
+        <div class="process-step">
+          <span class="step-num">// STEP 01</span>
+          <h4 class="step-title">Discovery Call</h4>
+          <p class="step-desc">We discuss your business goals, target customers, preferred platform, and timeline.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num">// STEP 02</span>
+          <h4 class="step-title">Design & Concept</h4>
+          <p class="step-desc">We create clean visual mockups and layout previews so you see exactly how your site will look.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num">// STEP 03</span>
+          <h4 class="step-title">Build & Optimize</h4>
+          <p class="step-desc">We build the site on your chosen platform, ensuring fast loading speeds, mobile responsiveness, and SEO.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num">// STEP 04</span>
+          <h4 class="step-title">Launch & Handover</h4>
+          <p class="step-desc">We test everything, connect your domain, launch the website, and show you how to make easy updates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         ENGAGEMENT PACKAGES
+         ==================================================== -->
+    <section id="engagement" style="margin-bottom: 100px;">
+      <div class="section-header">
+        <h2 class="section-title">Ways to Work Together</h2>
+        <span class="section-tag">[ PACKAGES // TRANSPARENT OPTIONS ]</span>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- Tier 01 -->
+        <div class="pricing-card">
+          <div>
+            <div class="pricing-badge">// FAST TURNAROUND</div>
+            <h3 class="pricing-name">Website Sprint / Redesign</h3>
+            <p class="pricing-desc">A fast 1-to-2 week project to redesign an existing website, build a high-converting landing page, or add custom visual features.</p>
+            <ul class="pricing-deliverables">
+              <li>Landing Page or Redesign</li>
+              <li>Platform Setup (Webflow, Framer, etc.)</li>
+              <li>Speed & Mobile Optimization</li>
+              <li>Launch in 1 - 2 Weeks</li>
+            </ul>
+          </div>
+          <a href="#terminal" class="btn-action btn-action-outline interactive-link">GET A SPRINT QUOTE</a>
+        </div>
+
+        <!-- Tier 02 (Featured) -->
+        <div class="pricing-card featured">
+          <div>
+            <div class="pricing-badge" style="color: var(--accent-teal);">// MOST POPULAR FOR BUSINESSES</div>
+            <h3 class="pricing-name">Complete Business Website</h3>
+            <p class="pricing-desc">A complete multi-page website or online store built from scratch. Includes custom design, Google SEO, speed optimization, and training.</p>
+            <ul class="pricing-deliverables">
+              <li>Full Multi-Page Website or E-Commerce</li>
+              <li>Custom Visuals & Brand Alignment</li>
+              <li>Built-In SEO & Google Setup</li>
+              <li>Easy-To-Use Content Management</li>
+            </ul>
+          </div>
+          <a href="#terminal" class="btn-action btn-action-teal interactive-link">START YOUR WEBSITE</a>
+        </div>
+
+        <!-- Tier 03 -->
+        <div class="pricing-card">
+          <div>
+            <div class="pricing-badge">// ONGOING SUPPORT & AGENCIES</div>
+            <h3 class="pricing-name">Monthly Retainer & Partner</h3>
+            <p class="pricing-desc">Continuous design, development, and AI automation support for growing businesses and agencies needing a reliable technical partner.</p>
+            <ul class="pricing-deliverables">
+              <li>Dedicated Design & Code Hours</li>
+              <li>Custom AI Tools & Automations</li>
+              <li>Priority Updates & Feature Builds</li>
+              <li>White-Label Agency Support Available</li>
+            </ul>
+          </div>
+          <a href="#terminal" class="btn-action btn-action-outline interactive-link">DISCUSS RETAINER</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         CONTACT / INQUIRY TERMINAL
+         ==================================================== -->
+    <section id="terminal" class="inquiry-console">
+      <div class="console-bar">
+        <span>[ GET IN TOUCH // PROJECT INQUIRY ]</span>
+        <span style="color: var(--accent-green);">FAST 24-HOUR RESPONSE</span>
+      </div>
+      <div class="console-body">
+        <div>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cyan); letter-spacing: 0.2em; display: block; margin-bottom: 12px;">// READY TO START?</span>
+          <h2 style="font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; color: #fff;">
+            LET’S BUILD A WEBSITE THAT WORKS FOR YOU.
+          </h2>
+          <p style="color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+            Tell us about your project, your timeline, and your preferred platform. We’ll get back to you within 24 hours with ideas, advice, and a clear quote.
+          </p>
+          <div style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-gold);">
+            PREFERRED_WHATSAPP: <a href="https://wa.me/27632280179" style="color: #fff; text-decoration: none;">063 228 0179 ↗</a>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+          <p style="color: var(--text-muted); font-size: 14px; line-height: 1.7;">
+            Choose the inquiry form that fits your project. Your message will open as a draft in WhatsApp so you can review it before sending.
+          </p>
+          <a href="contact.html#client-contact" class="btn-action btn-action-primary interactive-link">CLIENT PROJECT INQUIRY ↗</a>
+          <a href="contact.html#agency-contact" class="btn-action btn-action-outline interactive-link">AGENCY PARTNERSHIP INQUIRY ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page Footer -->
+    <footer class="page-footer">
+      <div class="footer-brand">RHETORICAL DESIGNS © 2026</div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="index.html">HOME</a>
+        <a href="services.html">SERVICES</a>
+        <a href="portfolio.html">PORTFOLIO</a>
+        <a href="about.html">ABOUT</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+      <div class="footer-contact">DUANE STEFFENS<br>EMAIL <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a><br>WHATSAPP <a href="https://wa.me/27632280179">063 228 0179</a></div>
+    </footer>
+
+  </main>
+
+  <script>
+    /* ==========================================================================
+       1. AMBIENT CONNECTED CONSTELLATION CANVAS
+       ========================================================================== */
+    const canvas = document.getElementById('ambient-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const particles = Array.from({ length: 65 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 1.5 + 0.5
+    }));
+
+    function renderCanvas() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.35)';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 140) {
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 * (1 - dist / 140)})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(renderCanvas);
+    }
+    renderCanvas();
+
+    /* ==========================================================================
+       2. INTERACTIVE HUD CURSOR
+       ========================================================================== */
+    const reticle = document.getElementById('cursor-reticle');
+    const coords = document.getElementById('cursor-coords');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      reticle.classList.add('active');
+      reticle.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      coords.innerText = `X:${Math.round(mouseX).toString().padStart(4, '0')} Y:${Math.round(mouseY).toString().padStart(4, '0')}`;
+    });
+
+    document.querySelectorAll('.interactive-link, .service-card, .process-step, .pricing-card, .funnel-card, .platform-chip').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        reticle.classList.add('hover-link');
+      });
+      item.addEventListener('mouseleave', () => {
+        reticle.classList.remove('hover-link');
+      });
+    });
+  </script>
+  <script src="hero-particles.js"></script>
+</body>
+</html>

@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RHETORICAL DESIGNS // WEB DESIGN & DEVELOPMENT</title>
+  <style>
+    :root {
+      --bg-light: #ffffff;
+      --bg-dark: #020307;
+      --card-bg: rgba(6, 9, 18, 0.78);
+      --border-sheen: rgba(0, 240, 255, 0.25);
+      --accent-cyan: #00f0ff;
+      --accent-amber: #ffb703;
+      --accent-magenta: #ff0055;
+      --accent-green: #00ff88;
+      --accent-gold: #e5c07b;
+      --accent-teal: #00e5c9;
+      --accent-orange: #ff7700;
+      --text-main: #f3f6fc;
+      --text-muted: #7e8c9f;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      cursor: none;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      height: 1600vh;
+    }
+
+    /* Ambient Luxury CRT Scanline & Grain Overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.6;
+    }
+
+    /* Interactive Luxury HUD Cursor */
+    #cursor-reticle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent-cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s, opacity 0.3s, background-color 0.2s;
+      mix-blend-mode: difference;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+
+    #cursor-reticle.active { opacity: 1; }
+    #cursor-reticle.hover-link {
+      width: 52px;
+      height: 52px;
+      border-color: var(--accent-teal);
+      background-color: rgba(0, 240, 255, 0.12);
+    }
+
+    #cursor-dot {
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    #cursor-coords {
+      position: absolute;
+      left: 45px;
+      top: -5px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--accent-cyan);
+      white-space: nowrap;
+    }
+
+    /* ====================================================
+       PERSISTENT TOP LUXURY MENU BAR
+       ==================================================== */
+    .persistent-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 950;
+      background: rgba(4, 7, 14, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+      transition: background 0.4s, border-color 0.4s;
+    }
+
+    .persistent-navbar::before {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent);
+    }
+
+    /* Nav Brand / Logo */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+    }
+
+    .nav-logo-icon {
+      color: var(--accent-cyan);
+      font-size: 15px;
+    }
+
+    .nav-status-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent-green);
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 4px;
+    }
+
+    /* Nav Center Links */
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer !important;
+    }
+
+    .nav-link span {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.35);
+      transition: color 0.25s;
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      border-color: rgba(0, 240, 255, 0.3);
+      background: rgba(0, 240, 255, 0.06);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+    }
+
+    .nav-link:hover span {
+      color: var(--accent-cyan);
+    }
+
+    /* Special Nav Highlights */
+    .nav-link-teal {
+      color: var(--accent-teal);
+      border-color: rgba(0, 229, 201, 0.25);
+      background: rgba(0, 229, 201, 0.05);
+    }
+
+    .nav-link-teal:hover {
+      color: #fff;
+      border-color: var(--accent-teal);
+      background: rgba(0, 229, 201, 0.15);
+      box-shadow: 0 0 15px rgba(0, 229, 201, 0.3);
+    }
+
+    .nav-link-orange {
+      color: var(--accent-orange);
+      border-color: rgba(255, 119, 0, 0.25);
+      background: rgba(255, 119, 0, 0.05);
+    }
+
+    .nav-link-orange:hover {
+      color: #fff;
+      border-color: var(--accent-orange);
+      background: rgba(255, 119, 0, 0.15);
+      box-shadow: 0 0 15px rgba(255, 119, 0, 0.3);
+    }
+
+    /* Nav Right (Header Actions) */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Fixed Telemetry HUD Readout Bars */
+    .telemetry-bar {
+      position: fixed;
+      top: 64px; /* Sits cleanly below persistent header */
+      bottom: 0;
+      width: 190px;
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.14em;
+      pointer-events: none;
+      z-index: 900;
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .telemetry-bar.visible { opacity: 0.85; }
+    .telemetry-left { left: 0; border-right: 1px solid rgba(0, 240, 255, 0.08); }
+    .telemetry-right { right: 0; border-left: 1px solid rgba(0, 240, 255, 0.08); text-align: right; }
+
+    /* 3D Perspective Viewport */
+    .viewport {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      perspective: 1100px;
+      overflow: hidden;
+    }
+
+    #bg-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .scene {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      will-change: transform;
+      z-index: 1;
+    }
+
+    .layer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 90%;
+      max-width: 1120px;
+      backface-visibility: hidden;
+      will-change: transform, opacity;
+      transition: opacity 0.2s linear;
+      transform-style: preserve-3d;
+    }
+
+    /* --- LAYER 1: Singularity Intro --- */
+    .layer-1-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #06080e;
+      position: relative;
+    }
+
+    .initial-black-dot {
+      width: 36px;
+      height: 36px;
+      background-color: #000000;
+      border-radius: 50%;
+      will-change: transform;
+      pointer-events: none;
+      margin: 28px 0;
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .scroll-hint {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: #666;
+      text-transform: uppercase;
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(4px); }
+    }
+
+    /* --- LAYER 2: OPEN CENTERED GLITCH LAYOUT --- */
+    .layer-2-center {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .layer-2-center .service-meta {
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      margin-bottom: 18px;
+    }
+
+    .glitch-heading {
+      position: relative;
+      font-size: clamp(38px, 6.2vw, 84px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      display: inline-block;
+      text-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
+    }
+
+    .glitch-heading::before,
+    .glitch-heading::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      pointer-events: none;
+    }
+
+    .glitch-heading::before {
+      left: 2px;
+      text-shadow: -2px 0 var(--accent-magenta);
+      animation: glitch-anim-1 2.2s infinite linear alternate-reverse;
+      opacity: 0.9;
+    }
+
+    .glitch-heading::after {
+      left: -2px;
+      text-shadow: 2px 0 var(--accent-cyan);
+      animation: glitch-anim-2 2.8s infinite linear alternate-reverse;
+      opacity: 0.9;
+    }
+
+    @keyframes glitch-anim-1 {
+      0% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, -1px); }
+      10% { clip-path: inset(80% 0 5% 0); transform: translate(3px, 1px); }
+      20% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 2px); }
+      30% { clip-path: inset(50% 0 20% 0); transform: translate(1px, -2px); }
+      40% { clip-path: inset(15% 0 60% 0); transform: translate(-3px, 1px); }
+      50% { clip-path: inset(70% 0 10% 0); transform: translate(3px, -1px); }
+      60% { clip-path: inset(30% 0 45% 0); transform: translate(-1px, 2px); }
+      70% { clip-path: inset(5% 0 85% 0); transform: translate(2px, -2px); }
+      80% { clip-path: inset(65% 0 15% 0); transform: translate(-2px, 1px); }
+      90% { clip-path: inset(40% 0 35% 0); transform: translate(1px, -1px); }
+      100% { clip-path: inset(25% 0 55% 0); transform: translate(0, 0); }
+    }
+
+    @keyframes glitch-anim-2 {
+      0% { clip-path: inset(15% 0 65% 0); transform: translate(3px, 1px); }
+      10% { clip-path: inset(45% 0 30% 0); transform: translate(-3px, -1px); }
+      20% { clip-path: inset(75% 0 10% 0); transform: translate(2px, -2px); }
+      30% { clip-path: inset(10% 0 80% 0); transform: translate(-1px, 2px); }
+      40% { clip-path: inset(60% 0 25% 0); transform: translate(3px, -1px); }
+      50% { clip-path: inset(35% 0 40% 0); transform: translate(-2px, 1px); }
+      60% { clip-path: inset(80% 0 5% 0); transform: translate(1px, -2px); }
+      70% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+      80% { clip-path: inset(50% 0 20% 0); transform: translate(2px, -1px); }
+      90% { clip-path: inset(5% 0 75% 0); transform: translate(-1px, 1px); }
+      100% { clip-path: inset(30% 0 50% 0); transform: translate(0, 0); }
+    }
+
+    .layer-2-center .service-desc {
+      font-size: 18px;
+      line-height: 1.7;
+      max-width: 660px;
+      margin: 0 auto;
+      color: #b0c0d8;
+    }
+
+    /* --- Standard 3D Specular Interactive Cards --- */
+    .card-box, .horizon-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sheen);
+      border-radius: 18px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, border-color 0.3s;
+    }
+
+    .card-box {
+      padding: 44px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .specular-sheen {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle 350px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%);
+      opacity: 0.9;
+    }
+
+    .card-box::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: 50px; right: 50px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    }
+
+    .service-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .service-title {
+      font-size: clamp(28px, 4.2vw, 46px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .service-desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 26px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .feature-item {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-item::before {
+      content: "◆";
+      color: var(--accent-cyan);
+      font-size: 9px;
+    }
+
+    .horizon-wrapper {
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .horizon-bar-line {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 0;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.14em;
+    }
+
+    /* --- LAYER 8: INTERACTIVE MENU DIRECTORY DECK --- */
+    .menu-deck {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      position: relative;
+    }
+
+    .menu-deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+    }
+
+    .menu-grid-standard {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .home-footer {
+      border-top: 1px solid rgba(0, 240, 255, 0.18);
+      padding-top: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr 1fr;
+      gap: 20px;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .home-footer-brand { color: #fff; font-weight: 700; }
+    .home-footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+    .home-footer a { color: var(--accent-cyan); text-decoration: none; }
+    .home-footer a:hover { color: #fff; }
+    .home-footer-contact { text-align: right; line-height: 1.8; }
+
+    .menu-card {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 24px;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer !important;
+    }
+
+    .menu-card-normal {
+      background: rgba(8, 12, 22, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0, 240, 255, 0.03);
+    }
+
+    .menu-card-normal:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 16px 45px rgba(0, 240, 255, 0.25), inset 0 0 25px rgba(0, 240, 255, 0.1);
+      transform: translateY(-5px);
+    }
+
+    .menu-card-normal:hover .menu-title {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 16px var(--accent-cyan);
+    }
+
+    .menu-top-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .menu-title {
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 8px;
+      transition: color 0.25s, text-shadow 0.25s;
+    }
+
+    .menu-desc {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .menu-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .menu-arrow {
+      font-size: 16px;
+      transition: transform 0.25s ease;
+    }
+
+    .menu-card:hover .menu-arrow { transform: translateX(5px); }
+
+    /* ----------------------------------------------------
+       ANIMATED TELEMETRY VECTOR HUDS
+       ---------------------------------------------------- */
+    .hud-container {
+      width: 100%;
+      aspect-ratio: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hud-svg { width: 100%; height: 100%; overflow: visible; }
+
+    @keyframes orbit-spin-cw { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes orbit-spin-ccw { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+    @keyframes core-pulse { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.15); opacity: 1; } }
+    @keyframes signal-ping { 0% { r: 12px; opacity: 1; } 100% { r: 130px; opacity: 0; } }
+
+    .orbit-cw { animation: orbit-spin-cw 24s linear infinite; transform-origin: 150px 150px; }
+    .orbit-cw-fast { animation: orbit-spin-cw 10s linear infinite; transform-origin: 150px 150px; }
+    .orbit-ccw { animation: orbit-spin-ccw 32s linear infinite; transform-origin: 150px 150px; }
+    .pulse-node { animation: core-pulse 2.5s ease-in-out infinite; transform-origin: 150px 150px; }
+    .ping-wave { animation: signal-ping 3s cubic-bezier(0, 0.2, 0.8, 1) infinite; transform-origin: 150px 150px; }
+
+    @media (max-width: 960px) {
+      .persistent-navbar { height: auto; min-height: 64px; padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+      .nav-center { display: flex; order: 3; flex: 1 0 100%; justify-content: center; flex-wrap: wrap; gap: 2px; }
+      .nav-link { padding: 5px 8px; }
+      .nav-status-badge { display: none; }
+      .card-box { grid-template-columns: 1fr; gap: 24px; padding: 28px; }
+      .hud-container { max-width: 220px; margin: 0 auto; }
+      .telemetry-bar { display: none; }
+      .feature-list { grid-template-columns: 1fr; }
+      .menu-grid-standard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .home-footer { grid-template-columns: 1fr; text-align: center; }
+      .home-footer-links { justify-content: center; }
+      .home-footer-contact { text-align: center; }
+      .nav-right { display: none; }
+      #cursor-reticle { display: none; }
+      * { cursor: auto; }
+    }
+    @media (max-width: 640px) {
+      .menu-grid-standard { grid-template-columns: 1fr; }
+      .home-footer-links {
+        flex-wrap: nowrap;
+        gap: 6px;
+        font-size: 8px;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="site-header.css">
+  <script src="site-header.js" defer></script>
+</head>
+<body>
+
+  <div class="scanlines"></div>
+
+  <!-- Persistent Luxury Aerospace Top Menu Bar -->
+  <header class="persistent-navbar" id="top-navbar">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo">
+        <img class="nav-logo-image" src="rhetorical-designs-logo.png" alt="Rhetorical Designs">
+      </a>
+    </div>
+
+    <button class="mobile-menu-toggle" type="button" data-mobile-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-center" id="primary-navigation" aria-label="Main navigation">
+      <a href="services.html" class="nav-link"><span>01</span>SERVICES</a>
+      <a href="portfolio.html" class="nav-link"><span>02</span>PORTFOLIO</a>
+      <a href="about.html" class="nav-link"><span>03</span>ABOUT</a>
+      <a href="contact.html" class="nav-link"><span>04</span>CONTACT</a>
+    </nav>
+
+    <div class="nav-right">
+      <a class="whatsapp-cta" href="https://wa.me/27632280179" aria-label="Chat with Rhetorical Designs on WhatsApp">
+        <span class="whatsapp-cta-mark" aria-hidden="true">WA</span>
+        <span>WHATSAPP</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Interactive Precision Cursor -->
+  <div id="cursor-reticle">
+    <div id="cursor-dot"></div>
+    <div id="cursor-coords">X:0000 Y:0000</div>
+  </div>
+
+  <!-- Telemetry HUD Sidebars -->
+  <div class="telemetry-bar telemetry-left" id="telemetry-left">
+    <div>// SYS_FREQ: 94.8 GHz</div>
+    <div>// SECTOR: TERMINAL DECK</div>
+    <div id="warp-factor">// VELOCITY: 0.00c</div>
+    <div style="margin-top: auto;">RADAR: PULSED_ARRAY</div>
+  </div>
+
+  <div class="telemetry-bar telemetry-right" id="telemetry-right">
+    <div id="depth-readout">DEPTH: 0000m</div>
+    <div id="scroll-pct">SCROLL: 000%</div>
+    <div style="margin-top: auto;" id="core-status">CORE: INERT</div>
+  </div>
+
+  <div class="viewport">
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="scene" id="scene">
+
+      <!-- LAYER 1 (Z = 0): Singularity Intro -->
+      <div class="layer" data-z="0" data-veer-x="-700" data-veer-y="-300" data-veer-r="-10">
+        <div class="layer-1-container">
+          <span class="service-meta" style="color: var(--accent-gold);">// DIGITAL DESIGN & WEB DEVELOPMENT</span>
+          <h1 class="service-title decrypt-title" style="color:#0a0d14; font-size: clamp(34px, 5.5vw, 68px);">
+            RHETORICAL DESIGNS
+          </h1>
+          <p style="max-width: 580px; font-size: 17px; font-weight: 500; line-height: 1.6; color: #2d3748;">
+            Websites and digital experiences designed to make ambitious ideas clear, useful, and memorable.
+          </p>
+          <div class="initial-black-dot" id="dot"></div>
+          <div class="scroll-hint">[ SCROLL DOWN TO INITIALIZE WARP ]</div>
+        </div>
+      </div>
+
+      <!-- LAYER 2 (Z = -1800): Open Centered Glitch Layout -->
+      <div class="layer" data-z="-1800" data-veer-x="750" data-veer-y="300" data-veer-r="8">
+        <div class="layer-2-center">
+          <span class="service-meta" style="color: var(--accent-magenta);">// LAYER 02 // CONTAINMENT DISSOLUTION</span>
+          <h2 class="glitch-heading decrypt-title" data-text="EVENT HORIZON BREACHED">
+            EVENT HORIZON BREACHED
+          </h2>
+          <p class="service-desc">
+            Containment failsafe destroyed. Local space-time has sheared into deep-space vector corridors. Telemetry arrays online.
+          </p>
+        </div>
+      </div>
+
+      <!-- LAYER 3 (Z = -3600): Service 01 -->
+      <div class="layer" data-z="-3600" data-veer-x="-950" data-veer-y="350" data-veer-r="-14">
+        <div class="card-box card-tilt">
+          <div class="specular-sheen"></div>
+          <div class="hud-container">
+            <svg class="hud-svg" viewBox="0 0 300 300">
+              <circle class="ping-wave" cx="150" cy="150" r="20" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5"/>
+              <circle cx="150" cy="150" r="130" fill="none" stroke="rgba(0, 240, 255, 0.12)" stroke-width="1"/>
+              <circle cx="150" cy="150" r="95" fill="none" stroke="rgba(0, 240, 255, 0.18)" stroke-width="1" stroke-dasharray="4 6"/>
+              
+              <g class="orbit-cw">
+                <ellipse cx="150" cy="150" rx="125" ry="45" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5" transform="rotate(-30 150 150)"/>
+                <g transform="rotate(-30 150 150)">
+                  <circle cx="275" cy="150" r="6" fill="var(--accent-cyan)"/>
+                  <circle cx="275" cy="150" r="12" fill="none" stroke="var(--accent-cyan)" stroke-width="1"/>
+                </g>
+              </g>
+
+              <g class="orbit-ccw">
+                <ellipse cx="150" cy="150" rx="115" ry="35" fill="none" stroke="rgba(255, 183, 3, 0.4)" stroke-width="1" stroke-dasharray="8 8" transform="rotate(45 150 150)"/>
+                <g transform="rotate(45 150 150)">
+                  <circle cx="35" cy="150" r="5" fill="var(--accent-amber)"/>
+                </g>
+              </g>
+
+              <g class="pulse-node">
+                <circle cx="150" cy="150" r="26" fill="rgba(0, 240, 255, 0.08)" stroke="var(--accent-cyan)" stroke-width="1.5"/>
+                <circle cx="150" cy="150" r="10" fill="var(--accent-cyan)"/>
+              </g>
+
+              <line x1="150" y1="150" x2="220" y2="80" stroke="var(--accent-cyan)" stroke-width="1" stroke-dasharray="2 3"/>
+              <rect x="210" y="65" width="65" height="18" fill="rgba(0, 240, 255, 0.15)" stroke="var(--accent-cyan)" stroke-width="1"/>
+              <text x="216" y="77" fill="var(--accent-cyan)" font-family="monospace" font-size="9">NODE_01:WEB</text>
+            </svg>
+          </div>
+
+          <div>
+            <span class="service-meta">// 01 // BESPOKE ARCHITECTURE</span>
+            <h2 class="service-title decrypt-title">Zero-Bloat Web Systems</h2>
+            <p class="service-desc">
+              High-velocity, hyper-optimized web engines engineered without monolithic framework drag. Built for max performance, sub-second loads, and cosmic scale.
+            </p>
+            <div class="feature-list">
+              <div class="feature-item">Sub-100ms Core Vitals</div>
+              <div class="feature-item">Clean Modular Code</div>
+              <div class="feature-item">Custom Frontend Engines</div>
+              <div class="feature-item">SEO & Microdata Optimized</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 4 (Z = -5400): Service 02 -->
+      <div class="layer" data-z="-5400" data-veer-x="950" data-veer-y="-300" data-veer-r="14">
+        <div class="card-box card-tilt">
+          <div class="specular-sheen"></div>
+          <div class="hud-container">
+            <svg class="hud-svg" viewBox="0 0 300 300">
+              <g class="orbit-cw-fast">
+                <circle cx="150" cy="150" r="130" fill="none" stroke="var(--accent-magenta)" stroke-width="2" stroke-dasharray="10 30 40 20"/>
+              </g>
+
+              <g class="orbit-ccw">
+                <ellipse cx="150" cy="150" rx="120" ry="50" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5" transform="rotate(-60 150 150)"/>
+                <g transform="rotate(-60 150 150)">
+                  <circle cx="270" cy="150" r="7" fill="var(--accent-magenta)"/>
+                </g>
+              </g>
+
+              <circle cx="150" cy="150" r="85" fill="none" stroke="rgba(255, 0, 85, 0.2)" stroke-width="1"/>
+              <circle cx="150" cy="150" r="45" fill="none" stroke="rgba(255, 0, 85, 0.3)" stroke-width="1" stroke-dasharray="3 3"/>
+
+              <g class="pulse-node">
+                <circle cx="150" cy="150" r="20" fill="rgba(255, 0, 85, 0.15)" stroke="var(--accent-magenta)" stroke-width="2"/>
+                <circle cx="150" cy="150" r="6" fill="#fff"/>
+              </g>
+
+              <line x1="150" y1="150" x2="80" y2="230" stroke="var(--accent-magenta)" stroke-width="1" stroke-dasharray="2 3"/>
+              <rect x="25" y="225" width="65" height="18" fill="rgba(255, 0, 85, 0.15)" stroke="var(--accent-magenta)" stroke-width="1"/>
+              <text x="31" y="237" fill="var(--accent-magenta)" font-family="monospace" font-size="9">NODE_02:UI</text>
+            </svg>
+          </div>
+
+          <div>
+            <span class="service-meta" style="color: var(--accent-magenta);">// 02 // HIGH-FREQUENCY UX</span>
+            <h2 class="service-title decrypt-title">Fluid Spatial Interfaces</h2>
+            <p class="service-desc">
+              Interactive 3D surfaces and kinetic layouts engineered with 120fps physics, GPU matrix transforms, and luxury glassmorphism lighting models.
+            </p>
+            <div class="feature-list">
+              <div class="feature-item">120fps Fluid Physics</div>
+              <div class="feature-item">Spatial Canvas FX</div>
+              <div class="feature-item">Micro-Interaction Choreography</div>
+              <div class="feature-item">Adaptive Dynamic HUDs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 5 (Z = -7200): Service 03 -->
+      <div class="layer" data-z="-7200" data-veer-x="-900" data-veer-y="320" data-veer-r="-12">
+        <div class="card-box card-tilt">
+          <div class="specular-sheen"></div>
+          <div class="hud-container">
+            <svg class="hud-svg" viewBox="0 0 300 300">
+              <g class="orbit-cw">
+                <ellipse cx="150" cy="150" rx="125" ry="40" fill="none" stroke="var(--accent-amber)" stroke-width="1.5" transform="rotate(15 150 150)"/>
+                <g transform="rotate(15 150 150)">
+                  <circle cx="275" cy="150" r="6" fill="var(--accent-amber)"/>
+                </g>
+              </g>
+
+              <g class="orbit-ccw">
+                <ellipse cx="150" cy="150" rx="125" ry="40" fill="none" stroke="var(--accent-green)" stroke-width="1.5" transform="rotate(-75 150 150)"/>
+                <g transform="rotate(-75 150 150)">
+                  <circle cx="275" cy="150" r="6" fill="var(--accent-green)"/>
+                </g>
+              </g>
+
+              <g class="pulse-node">
+                <polygon points="150,125 170,165 130,165" fill="rgba(255, 183, 3, 0.2)" stroke="var(--accent-amber)" stroke-width="2"/>
+                <circle cx="150" cy="150" r="5" fill="var(--accent-amber)"/>
+              </g>
+
+              <line x1="150" y1="150" x2="230" y2="210" stroke="var(--accent-amber)" stroke-width="1" stroke-dasharray="2 3"/>
+              <rect x="215" y="205" width="70" height="18" fill="rgba(255, 183, 3, 0.15)" stroke="var(--accent-amber)" stroke-width="1"/>
+              <text x="220" y="217" fill="var(--accent-amber)" font-family="monospace" font-size="9">NODE_03:AGENT</text>
+            </svg>
+          </div>
+
+          <div>
+            <span class="service-meta" style="color: var(--accent-amber);">// 03 // COGNITIVE AGENTS</span>
+            <h2 class="service-title decrypt-title">Autonomous AI Pipelines</h2>
+            <p class="service-desc">
+              Multi-agent orchestration engines, localized LLM integrations, and intelligent autonomous workflows tailored for high-complexity enterprise tasks.
+            </p>
+            <div class="feature-list">
+              <div class="feature-item">Multi-Agent Swarms</div>
+              <div class="feature-item">Local & Cloud LLM APIs</div>
+              <div class="feature-item">Self-Healing Automations</div>
+              <div class="feature-item">Dynamic Semantic Extraction</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 6 (Z = -9000): Service 04 -->
+      <div class="layer" data-z="-9000" data-veer-x="900" data-veer-y="300" data-veer-r="12">
+        <div class="card-box card-tilt">
+          <div class="specular-sheen"></div>
+          <div class="hud-container">
+            <svg class="hud-svg" viewBox="0 0 300 300">
+              <g class="orbit-cw-fast">
+                <circle cx="150" cy="150" r="135" fill="none" stroke="var(--accent-green)" stroke-width="1.5" stroke-dasharray="20 10 5 10"/>
+                <circle cx="285" cy="150" r="5" fill="var(--accent-green)"/>
+              </g>
+
+              <g class="orbit-ccw">
+                <ellipse cx="150" cy="150" rx="100" ry="100" fill="none" stroke="rgba(0, 255, 136, 0.25)" stroke-width="1"/>
+                <circle cx="150" cy="50" r="6" fill="var(--accent-green)"/>
+              </g>
+
+              <g class="pulse-node">
+                <rect x="130" y="130" width="40" height="40" fill="rgba(0, 255, 136, 0.12)" stroke="var(--accent-green)" stroke-width="2"/>
+                <circle cx="150" cy="150" r="6" fill="var(--accent-green)"/>
+              </g>
+
+              <line x1="150" y1="150" x2="70" y2="80" stroke="var(--accent-green)" stroke-width="1" stroke-dasharray="2 3"/>
+              <rect x="15" y="65" width="70" height="18" fill="rgba(0, 255, 136, 0.15)" stroke="var(--accent-green)" stroke-width="1"/>
+              <text x="21" y="77" fill="var(--accent-green)" font-family="monospace" font-size="9">NODE_04:INFRA</text>
+            </svg>
+          </div>
+
+          <div>
+            <span class="service-meta" style="color: var(--accent-green);">// 04 // CLOUD ORCHESTRATION</span>
+            <h2 class="service-title decrypt-title">Hardened Infrastructure</h2>
+            <p class="service-desc">
+              High-throughput virtual cloud topologies, SSH reverse tunneling, and edge-distributed infrastructure engineered to host high-uptime AI swarms.
+            </p>
+            <div class="feature-list">
+              <div class="feature-item">Hardened Cloud Hubs</div>
+              <div class="feature-item">Secure Reverse Proxies</div>
+              <div class="feature-item">Continuous Deployment</div>
+              <div class="feature-item">Sub-10ms Global Routing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 7 (Z = -10800): Command Console Dock -->
+      <div class="layer" data-z="-10800" data-veer-x="0" data-veer-y="-600" data-veer-r="0">
+        <div class="horizon-wrapper card-tilt">
+          <div class="specular-sheen"></div>
+          <div class="horizon-bar-line">
+            <span>[ LAYER 07 // QUANTUM TERMINAL ]</span>
+            <span style="color: var(--accent-green);">STABILIZATION CONFIRMED</span>
+          </div>
+          <h1 class="service-title decrypt-title" style="font-size: clamp(34px, 5.5vw, 68px);">
+            GRAVITY WELL SECURED
+          </h1>
+          <p class="service-desc" style="max-width: 680px; margin: 0 auto;">
+            You have navigated the deep telemetry matrix. Continue scrolling to engage the primary command navigation terminal.
+          </p>
+          <div class="horizon-bar-line" style="justify-content: center; margin-top: 8px;">
+            <span style="color: var(--accent-cyan);">▼ SCROLL TO DEPLOY NAVIGATION MATRIX ▼</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 8 (Z = -12600): INTERACTIVE MENU DIRECTORY DECK -->
+      <div class="layer" data-z="-12600" data-veer-x="0" data-veer-y="0" data-veer-r="0">
+        <div class="menu-deck">
+          
+          <div class="menu-deck-header">
+            <span style="color: var(--accent-cyan);">// [ LAYER 08 ] NAVIGATION DIRECTORY</span>
+            <span style="color: var(--accent-gold);">SYSTEM STATUS: ONLINE</span>
+          </div>
+
+          <div class="menu-grid-standard">
+            <a href="services.html" class="menu-card menu-card-normal nav-item">
+              <div>
+                <div class="menu-top-meta">
+                  <span>CAPABILITIES</span>
+                  <span style="color: var(--accent-cyan);">[ 01 ]</span>
+                </div>
+                <h3 class="menu-title">Services</h3>
+                <p class="menu-desc">Explore full-stack engineering, spatial interfaces, and agentic solutions.</p>
+              </div>
+              <div class="menu-footer">
+                <span style="color: var(--accent-cyan);">ACCESS SERVICES</span>
+                <span class="menu-arrow" style="color: var(--accent-cyan);">→</span>
+              </div>
+            </a>
+
+            <a href="portfolio.html" class="menu-card menu-card-normal nav-item">
+              <div>
+                <div class="menu-top-meta">
+                  <span>SHOWCASE</span>
+                  <span style="color: var(--accent-cyan);">[ 02 ]</span>
+                </div>
+                <h3 class="menu-title">Portfolio</h3>
+                <p class="menu-desc">View selected websites, 3D experiences, digital products, and automation tools.</p>
+              </div>
+              <div class="menu-footer">
+                <span style="color: var(--accent-cyan);">VIEW PORTFOLIO</span>
+                <span class="menu-arrow" style="color: var(--accent-cyan);">→</span>
+              </div>
+            </a>
+
+            <a href="about.html" class="menu-card menu-card-normal nav-item">
+              <div>
+                <div class="menu-top-meta">
+                  <span>MANIFESTO</span>
+                  <span style="color: var(--accent-cyan);">[ 03 ]</span>
+                </div>
+                <h3 class="menu-title">About</h3>
+                <p class="menu-desc">Discover the philosophy, engineering discipline, and creative approach.</p>
+              </div>
+              <div class="menu-footer">
+                <span style="color: var(--accent-cyan);">READ ABOUT</span>
+                <span class="menu-arrow" style="color: var(--accent-cyan);">→</span>
+              </div>
+            </a>
+
+            <a href="contact.html" class="menu-card menu-card-normal nav-item">
+              <div>
+                <div class="menu-top-meta">
+                  <span>INQUIRIES</span>
+                  <span style="color: var(--accent-cyan);">[ 04 ]</span>
+                </div>
+                <h3 class="menu-title">Contact</h3>
+                <p class="menu-desc">Start a conversation about a project, creative partnership, or next step.</p>
+              </div>
+              <div class="menu-footer">
+                <span style="color: var(--accent-cyan);">GET IN TOUCH</span>
+                <span class="menu-arrow" style="color: var(--accent-cyan);">→</span>
+              </div>
+            </a>
+          </div>
+
+          <footer class="home-footer">
+            <div class="home-footer-brand">RHETORICAL DESIGNS © 2026</div>
+            <nav class="home-footer-links" aria-label="Footer navigation">
+              <a href="index.html">HOME</a>
+              <a href="services.html">SERVICES</a>
+              <a href="portfolio.html">PORTFOLIO</a>
+              <a href="about.html">ABOUT</a>
+              <a href="contact.html">CONTACT</a>
+            </nav>
+            <div class="home-footer-contact">DUANE STEFFENS<br>EMAIL <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a><br>WHATSAPP <a href="https://wa.me/27632280179">063 228 0179</a></div>
+          </footer>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. TEXT DECRYPTION SCRAMBLE EFFECT
+       ========================================================================== */
+    const glyphs = 'ABCDEF0123456789!<>-_\\/[]{}—=+*^?#';
+    const decryptElements = document.querySelectorAll('.decrypt-title');
+
+    decryptElements.forEach(el => {
+      el.dataset.original = el.innerText.trim();
+      el.dataset.scrambled = 'false';
+    });
+
+    function scrambleText(element) {
+      if (element.dataset.scrambled === 'true') return;
+      element.dataset.scrambled = 'true';
+      const target = element.dataset.original;
+      let iteration = 0;
+      clearInterval(element.scrambleInterval);
+
+      element.scrambleInterval = setInterval(() => {
+        const current = target.split('').map((char, index) => {
+          if (index < iteration) return target[index];
+          if (char === ' ') return ' ';
+          return glyphs[Math.floor(Math.random() * glyphs.length)];
+        }).join('');
+
+        element.innerText = current;
+        if (element.hasAttribute('data-text')) {
+          element.setAttribute('data-text', current);
+        }
+
+        if (iteration >= target.length) {
+          clearInterval(element.scrambleInterval);
+          if (element.hasAttribute('data-text')) {
+            element.setAttribute('data-text', target);
+          }
+        }
+        iteration += 1 / 2;
+      }, 25);
+    }
+
+    function resetScramble(element) {
+      element.dataset.scrambled = 'false';
+    }
+
+    /* ==========================================================================
+       2. 3D GYROSCOPIC TILT & SPECULAR SHEEN ENGINE
+       ========================================================================== */
+    const tiltCards = document.querySelectorAll('.card-tilt');
+    const reticle = document.getElementById('cursor-reticle');
+    const coords = document.getElementById('cursor-coords');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      reticle.classList.add('active');
+      reticle.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      coords.innerText = `X:${Math.round(mouseX).toString().padStart(4, '0')} Y:${Math.round(mouseY).toString().padStart(4, '0')}`;
+
+      tiltCards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          const cardX = mouseX - rect.left;
+          const cardY = mouseY - rect.top;
+          const pctX = (cardX / rect.width) * 100;
+          const pctY = (cardY / rect.height) * 100;
+
+          card.style.setProperty('--mouse-x', `${pctX}%`);
+          card.style.setProperty('--mouse-y', `${pctY}%`);
+
+          const rotX = ((cardY / rect.height) - 0.5) * -12;
+          const rotY = ((cardX / rect.width) - 0.5) * 12;
+          card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02, 1.02, 1.02)`;
+        } else {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        }
+      });
+    });
+
+    document.querySelectorAll('.nav-item, .nav-link, .nav-logo').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        reticle.classList.add('hover-link');
+      });
+      item.addEventListener('mouseleave', () => {
+        reticle.classList.remove('hover-link');
+      });
+    });
+
+    /* ==========================================================================
+       3. TOP NAVBAR 3D DEEP-LINKING JUMP CONTROLLER
+       ========================================================================== */
+    const maxScroll = 13800;
+
+    document.querySelectorAll('.deep-jump').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetZ = parseFloat(link.getAttribute('data-target-z'));
+        const totalScrollable = document.body.scrollHeight - window.innerHeight;
+        const targetScrollY = (targetZ / maxScroll) * totalScrollable;
+
+        window.scrollTo({
+          top: targetScrollY,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    /* ==========================================================================
+       4. HIGH-PERFORMANCE CANVAS WARP & RELATIVISTIC STARFIELD
+       ========================================================================== */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const stars = Array.from({ length: 700 }, () => ({
+      x: (Math.random() - 0.5) * 3800,
+      y: (Math.random() - 0.5) * 3800,
+      z: Math.random() * 14000,
+      size: Math.random() * 1.5 + 0.4,
+      twinkle: Math.random() * Math.PI * 2,
+      speed: 0.025 + Math.random() * 0.035
+    }));
+
+    const scene = document.getElementById('scene');
+    const layers = document.querySelectorAll('.layer');
+    const dot = document.getElementById('dot');
+    const telLeft = document.getElementById('telemetry-left');
+    const telRight = document.getElementById('telemetry-right');
+    const depthReadout = document.getElementById('depth-readout');
+    const scrollPct = document.getElementById('scroll-pct');
+    const warpFactor = document.getElementById('warp-factor');
+    const coreStatus = document.getElementById('core-status');
+
+    let smoothCameraZ = 0;
+    let lastScrollY = window.scrollY;
+    let scrollVelocity = 0;
+
+    function render() {
+      const scrollY = window.scrollY;
+      const totalScrollable = document.body.scrollHeight - window.innerHeight;
+      const targetProgress = Math.min(1, Math.max(0, scrollY / totalScrollable));
+      const targetCameraZ = targetProgress * maxScroll;
+
+      smoothCameraZ += (targetCameraZ - smoothCameraZ) * 0.085;
+
+      const deltaScroll = Math.abs(scrollY - lastScrollY);
+      scrollVelocity += (deltaScroll - scrollVelocity) * 0.15;
+      lastScrollY = scrollY;
+
+      scene.style.transform = `translateZ(${smoothCameraZ}px)`;
+
+      // Black Dot Expands dynamically through Layer 1
+      const dotProgress = Math.min(1, Math.max(0, smoothCameraZ / 1400));
+      const dotScale = 1 + Math.pow(dotProgress, 3.2) * 220;
+      if (dot) {
+        dot.style.transform = `scale(${dotScale})`;
+      }
+
+      // Smooth background transition: White -> Deep Cosmic Void (#020307)
+      const darkFactor = Math.min(1, Math.max(0, (smoothCameraZ - 100) / 900));
+      const r = Math.round(255 - darkFactor * (255 - 2));
+      const g = Math.round(255 - darkFactor * (255 - 3));
+      const b = Math.round(255 - darkFactor * (255 - 7));
+
+      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillRect(0, 0, width, height);
+
+      // Fixed Telemetry HUD Display
+      if (darkFactor > 0.4) {
+        telLeft.classList.add('visible');
+        telRight.classList.add('visible');
+      } else {
+        telLeft.classList.remove('visible');
+        telRight.classList.remove('visible');
+      }
+
+      depthReadout.innerText = `DEPTH: ${Math.round(smoothCameraZ)}m`;
+      scrollPct.innerText = `SCROLL: ${Math.round(targetProgress * 100).toString().padStart(3, '0')}%`;
+      const velocityMach = (0.2 + (scrollVelocity * 0.08)).toFixed(2);
+      warpFactor.innerText = `// VELOCITY: ${velocityMach}c`;
+
+      if (smoothCameraZ > 12000) {
+        coreStatus.innerText = 'TERMINAL: LOCKED';
+        coreStatus.style.color = 'var(--accent-teal)';
+      } else if (smoothCameraZ > 1200) {
+        coreStatus.innerText = 'CORE: OVERDRIVE';
+        coreStatus.style.color = 'var(--accent-cyan)';
+      } else {
+        coreStatus.innerText = 'CORE: INERT';
+        coreStatus.style.color = 'var(--accent-amber)';
+      }
+
+      // 3D Spatial Windowing, Veering, and Layer Filtering
+      layers.forEach(layer => {
+        const baseZ = parseFloat(layer.getAttribute('data-z'));
+        const veerX = parseFloat(layer.getAttribute('data-veer-x') || '0');
+        const veerY = parseFloat(layer.getAttribute('data-veer-y') || '0');
+        const veerR = parseFloat(layer.getAttribute('data-veer-r') || '0');
+
+        const relativeZ = baseZ + smoothCameraZ;
+
+        let offsetX = 0, offsetY = 0, offsetR = 0;
+
+        if (relativeZ > 100) {
+          const progress = Math.min(1, (relativeZ - 100) / 900);
+          const veerFactor = Math.pow(progress, 2.2);
+          offsetX = veerX * veerFactor;
+          offsetY = veerY * veerFactor;
+          offsetR = veerR * veerFactor;
+        }
+
+        layer.style.transform = `translate3d(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px), ${baseZ}px) rotateZ(${offsetR}deg)`;
+
+        // Opacity Windowing & Absolute Zero Bleed-Through on White
+        let opacity = 0;
+
+        if (baseZ === 0) {
+          if (relativeZ > 200) {
+            opacity = Math.max(0, 1 - (relativeZ - 200) / 500);
+          } else {
+            opacity = 1;
+          }
+        } else if (baseZ === -12600) {
+          if (relativeZ > 300) {
+            opacity = Math.max(0, 1 - (relativeZ - 300) / 400);
+          } else if (relativeZ < -1400) {
+            opacity = Math.max(0, 1 - (-1400 - relativeZ) / 700);
+          } else {
+            opacity = 1;
+          }
+          opacity *= darkFactor;
+        } else {
+          if (relativeZ > 250) {
+            opacity = Math.max(0, 1 - (relativeZ - 250) / 450);
+          } else if (relativeZ < -1100) {
+            opacity = Math.max(0, 1 - (-1100 - relativeZ) / 600);
+          } else {
+            opacity = 1;
+          }
+          opacity *= darkFactor;
+        }
+
+        layer.style.opacity = opacity;
+        layer.style.visibility = opacity <= 0.001 ? 'hidden' : 'visible';
+        layer.style.pointerEvents = opacity > 0.6 ? 'auto' : 'none';
+
+        // Trigger Text Decryption when in focus
+        const decryptTitle = layer.querySelector('.decrypt-title');
+        if (decryptTitle && opacity > 0.1) {
+          if (Math.abs(relativeZ) < 550) {
+            scrambleText(decryptTitle);
+          } else if (Math.abs(relativeZ) > 1800) {
+            resetScramble(decryptTitle);
+          }
+        }
+      });
+
+      // Relativistic Starfield & Warp Velocity Streaks
+      if (darkFactor > 0.05) {
+        const fov = 450;
+        const warpStretch = Math.min(18, scrollVelocity * 0.45);
+
+        stars.forEach(s => {
+          let relZ = (s.z - smoothCameraZ) % 14000;
+          if (relZ < 0) relZ += 14000;
+
+          const scale = fov / (relZ + 1);
+          const x2d = width / 2 + s.x * scale;
+          const y2d = height / 2 + s.y * scale;
+
+          if (x2d >= 0 && x2d <= width && y2d >= 0 && y2d <= height && relZ > 10) {
+            s.twinkle += s.speed;
+            const alpha = (0.35 + Math.sin(s.twinkle) * 0.35) * Math.sin((relZ / 14000) * Math.PI) * darkFactor;
+            
+            ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
+            ctx.strokeStyle = `rgba(0, 240, 255, ${alpha * 0.7})`;
+
+            if (warpStretch > 1.2) {
+              const dx = (x2d - width / 2) * (warpStretch * 0.015);
+              const dy = (y2d - height / 2) * (warpStretch * 0.015);
+              ctx.lineWidth = Math.max(0.6, s.size * scale * 0.5);
+              ctx.beginPath();
+              ctx.moveTo(x2d, y2d);
+              ctx.lineTo(x2d + dx, y2d + dy);
+              ctx.stroke();
+            } else {
+              ctx.beginPath();
+              ctx.arc(x2d, y2d, Math.max(0.25, s.size * scale * 0.7), 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        });
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
+</body>
+</html>

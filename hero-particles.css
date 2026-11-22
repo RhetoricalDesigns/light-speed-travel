@@ -1,0 +1,26 @@
+.hero-particle-surface {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.hero-particle-surface > :not(.hero-particles) {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-particles {
+    opacity: 0.38;
+  }
+}

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Rhetorical Designs about your next website, digital product, or creative technology partnership.">
+  <title>CONTACT // RHETORICAL DESIGNS</title>
+  <style>
+    :root {
+      --bg-dark: #020307;
+      --bg-surface: #070b14;
+      --card-bg: rgba(6, 9, 18, 0.88);
+      --accent-cyan: #00f0ff;
+      --accent-teal: #00e5c9;
+      --accent-orange: #ff7700;
+      --text-main: #f3f6fc;
+      --text-muted: #8b9bb4;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0.3;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+      background-size: 100% 3px;
+    }
+
+    .persistent-navbar {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 30;
+      min-height: 64px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(4, 7, 14, 0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+
+    .nav-left, .nav-center { display: flex; align-items: center; }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .nav-logo-icon { color: var(--accent-cyan); }
+    .nav-center { gap: 8px; }
+    .nav-link {
+      padding: 6px 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      transition: 0.2s ease;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--accent-cyan);
+      border-color: rgba(0, 240, 255, 0.35);
+      background: rgba(0, 240, 255, 0.07);
+    }
+    .nav-right a {
+      color: var(--accent-teal);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
+    .nav-right a.whatsapp-cta {
+      color: #03151a;
+      text-decoration: none;
+    }
+
+    .page-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 132px 32px 64px;
+    }
+    .contact-hero {
+      padding: 32px 0 48px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+    .eyebrow, .form-kicker {
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .contact-hero h1 {
+      max-width: 850px;
+      margin-top: 16px;
+      color: #fff;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.03;
+      letter-spacing: -0.045em;
+    }
+    .contact-hero h1 span { color: var(--accent-cyan); }
+    .hero-copy {
+      max-width: 760px;
+      margin-top: 20px;
+      color: var(--text-muted);
+      font-size: 17px;
+    }
+    .contact-highlights {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+    .highlight {
+      padding: 18px 20px;
+      background: rgba(6, 9, 18, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.17);
+      border-radius: 10px;
+    }
+    .highlight-label {
+      display: block;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+    }
+    .highlight strong, .highlight a {
+      display: inline-block;
+      margin-top: 5px;
+      color: #fff;
+      font-size: 15px;
+      text-decoration: none;
+    }
+    .highlight a:hover { color: var(--accent-cyan); }
+
+    .forms-heading { margin: 48px 0 20px; }
+    .forms-heading h2 {
+      color: #fff;
+      font-size: clamp(26px, 4vw, 38px);
+      line-height: 1.2;
+    }
+    .forms-heading p { max-width: 680px; margin-top: 8px; color: var(--text-muted); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+    .contact-card {
+      padding: clamp(22px, 3vw, 34px);
+      background: linear-gradient(145deg, rgba(7, 11, 20, 0.96), rgba(3, 6, 12, 0.94));
+      border: 1px solid rgba(0, 240, 255, 0.22);
+      border-radius: 14px;
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.36);
+    }
+    .contact-card.agency { border-color: rgba(255, 119, 0, 0.35); }
+    .contact-card h3 {
+      margin: 8px 0;
+      color: #fff;
+      font-size: clamp(23px, 3vw, 30px);
+      line-height: 1.15;
+    }
+    .form-intro { margin-bottom: 24px; color: var(--text-muted); font-size: 14px; }
+    .form-fields { display: grid; gap: 16px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 13px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(0, 240, 255, 0.22);
+      border-radius: 6px;
+      font: 13px var(--font-mono);
+    }
+    .agency .field input, .agency .field select, .agency .field textarea {
+      border-color: rgba(255, 119, 0, 0.24);
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: 2px solid rgba(0, 240, 255, 0.3);
+      border-color: var(--accent-cyan);
+    }
+    .agency .field input:focus, .agency .field select:focus, .agency .field textarea:focus {
+      outline-color: rgba(255, 119, 0, 0.3);
+      border-color: var(--accent-orange);
+    }
+    .field textarea { min-height: 120px; resize: vertical; }
+    .submit-button {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 18px;
+      color: #001013;
+      background: var(--accent-cyan);
+      border: 0;
+      border-radius: 6px;
+      font: 700 11px var(--font-mono);
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .submit-button:hover { background: #fff; box-shadow: 0 0 24px rgba(0, 240, 255, 0.25); }
+    .agency .submit-button { color: #1b0a00; background: var(--accent-orange); }
+    .agency .submit-button:hover { background: #fff; box-shadow: 0 0 24px rgba(255, 119, 0, 0.25); }
+    .form-note, .form-status { color: var(--text-muted); font-size: 12px; }
+    .form-status { min-height: 1.5em; color: var(--accent-teal); }
+
+    .page-footer {
+      margin-top: 64px;
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font: 11px var(--font-mono);
+      letter-spacing: 0.1em;
+    }
+    .footer-brand { color: #fff; font-weight: 700; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 14px; }
+    .footer-links a, .footer-contact a { color: var(--accent-cyan); text-decoration: none; }
+    .footer-links a:hover, .footer-contact a:hover { color: #fff; }
+    .footer-contact { text-align: right; line-height: 1.8; }
+
+    @media (max-width: 960px) {
+      .persistent-navbar { height: auto; min-height: 64px; padding: 10px 20px; flex-wrap: wrap; gap: 8px; }
+      .nav-center { order: 3; flex: 1 0 100%; justify-content: center; flex-wrap: wrap; gap: 2px; }
+      .nav-link { padding: 5px 8px; }
+      .nav-right { margin-left: auto; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page-container { padding: 128px 18px 40px; }
+      .forms-heading { margin: 36px 0 16px; }
+      .forms-heading h2 {
+        font-size: clamp(22px, 6vw, 26px);
+        line-height: 1.2;
+      }
+      .forms-heading .eyebrow {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+      }
+      .forms-heading p { font-size: 14px; }
+      .contact-highlights { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+      .nav-right { display: none; }
+      .page-footer { grid-template-columns: 1fr; gap: 12px; text-align: center; }
+      .footer-links {
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+        font-size: 9px;
+        letter-spacing: 0.06em;
+      }
+      .footer-contact { text-align: center; }
+    }
+  </style>
+  <link rel="stylesheet" href="hero-particles.css">
+  <link rel="stylesheet" href="site-header.css">
+  <script src="site-header.js" defer></script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <header class="persistent-navbar">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo">
+        <img class="nav-logo-image" src="rhetorical-designs-logo.png" alt="Rhetorical Designs">
+      </a>
+    </div>
+    <button class="mobile-menu-toggle" type="button" data-mobile-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav class="nav-center" id="primary-navigation" aria-label="Main navigation">
+      <a href="services.html" class="nav-link">01 SERVICES</a>
+      <a href="portfolio.html" class="nav-link">02 PORTFOLIO</a>
+      <a href="about.html" class="nav-link">03 ABOUT</a>
+      <a href="contact.html" class="nav-link active" aria-current="page">04 CONTACT</a>
+    </nav>
+    <div class="nav-right">
+      <a class="whatsapp-cta" href="https://wa.me/27632280179" aria-label="Chat with Rhetorical Designs on WhatsApp">
+        <span class="whatsapp-cta-mark" aria-hidden="true">WA</span>
+        <span>WHATSAPP</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="page-container">
+    <section class="contact-hero hero-particle-surface">
+      <canvas class="hero-particles" data-hero-particles aria-hidden="true"></canvas>
+      <div class="eyebrow">// CONTACT // START A CONVERSATION</div>
+      <h1>Good work starts with a <span>clear conversation.</span></h1>
+      <p class="hero-copy">Tell Duane what you are building, where you need support, and what success looks like. Choose the form that best fits your project and your message will open in WhatsApp, ready for you to review and send.</p>
+      <div class="contact-highlights">
+        <div class="highlight">
+          <span class="highlight-label">// YOUR CONTACT</span>
+          <strong>Duane Steffens</strong>
+        </div>
+        <div class="highlight">
+          <span class="highlight-label">// PREFERRED CHANNEL</span>
+          <a href="https://wa.me/27632280179">WhatsApp 063 228 0179 ↗</a>
+        </div>
+        <div class="highlight">
+          <span class="highlight-label">// WHO THIS IS FOR</span>
+          <strong>Businesses, brands & agencies</strong>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="forms-title">
+      <div class="forms-heading">
+        <div class="eyebrow">// PROJECT INQUIRIES</div>
+        <h2 id="forms-title">Choose your starting point</h2>
+        <p>Each form asks for the details most useful to that kind of collaboration. You can edit the message in WhatsApp before sending it.</p>
+      </div>
+
+      <div class="contact-grid">
+        <section class="contact-card" id="client-contact" aria-labelledby="client-form-title">
+          <div class="form-kicker">// 01 — DIRECT PROJECT</div>
+          <h3 id="client-form-title">Client Contact Form</h3>
+          <p class="form-intro">For business owners, founders, and teams looking for a new website, digital product, redesign, or ongoing support.</p>
+          <form class="whatsapp-form" data-form-title="Client project inquiry">
+            <div class="form-fields">
+              <div class="field-row">
+                <div class="field">
+                  <label for="client-name">Your name *</label>
+                  <input id="client-name" name="Name" autocomplete="name" required>
+                </div>
+                <div class="field">
+                  <label for="client-business">Business / brand *</label>
+                  <input id="client-business" name="Business or brand" autocomplete="organization" required>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="client-email">Email *</label>
+                  <input id="client-email" name="Email" type="email" autocomplete="email" required>
+                </div>
+                <div class="field">
+                  <label for="client-phone">Phone / WhatsApp</label>
+                  <input id="client-phone" name="Phone or WhatsApp" type="tel" autocomplete="tel">
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="client-service">What do you need? *</label>
+                  <select id="client-service" name="Project type" required>
+                    <option value="">Choose a project type</option>
+                    <option>New website</option>
+                    <option>Website redesign</option>
+                    <option>E-commerce</option>
+                    <option>Web application or digital product</option>
+                    <option>AI or workflow automation</option>
+                    <option>Ongoing support</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="client-timing">Ideal timing</label>
+                  <select id="client-timing" name="Ideal timing">
+                    <option>Flexible</option>
+                    <option>As soon as possible</option>
+                    <option>Within a month</option>
+                    <option>Within 1–3 months</option>
+                    <option>More than 3 months</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="client-details">Tell us about your project *</label>
+                <textarea id="client-details" name="Project details" required placeholder="What are you hoping to achieve? Include any useful links, requirements, or questions."></textarea>
+              </div>
+              <button class="submit-button" type="submit">CONTINUE IN WHATSAPP ↗</button>
+              <p class="form-note">Your message is prepared on your device. It is not sent until you press Send in WhatsApp.</p>
+              <p class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+
+        <section class="contact-card agency" id="agency-contact" aria-labelledby="agency-form-title">
+          <div class="form-kicker" style="color: var(--accent-orange);">// 02 — CREATIVE PARTNERSHIP</div>
+          <h3 id="agency-form-title">Agency Contact Form</h3>
+          <p class="form-intro">For agencies and studios seeking a reliable design and development partner for white-label work, overflow, or specialist builds.</p>
+          <form class="whatsapp-form" data-form-title="Agency partnership inquiry">
+            <div class="form-fields">
+              <div class="field-row">
+                <div class="field">
+                  <label for="agency-name">Your name *</label>
+                  <input id="agency-name" name="Contact name" autocomplete="name" required>
+                </div>
+                <div class="field">
+                  <label for="agency-company">Agency / studio *</label>
+                  <input id="agency-company" name="Agency or studio" autocomplete="organization" required>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="agency-email">Work email *</label>
+                  <input id="agency-email" name="Work email" type="email" autocomplete="email" required>
+                </div>
+                <div class="field">
+                  <label for="agency-phone">Phone / WhatsApp</label>
+                  <input id="agency-phone" name="Phone or WhatsApp" type="tel" autocomplete="tel">
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="agency-support">Support needed *</label>
+                  <select id="agency-support" name="Support needed" required>
+                    <option value="">Choose an area</option>
+                    <option>White-label website development</option>
+                    <option>Design and creative direction</option>
+                    <option>Interactive / 3D web experience</option>
+                    <option>Web application or custom tooling</option>
+                    <option>AI or workflow automation</option>
+                    <option>Overflow or ongoing partnership</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="agency-deadline">Deadline / start date</label>
+                  <input id="agency-deadline" name="Deadline or start date" placeholder="e.g. 15 July or flexible">
+                </div>
+              </div>
+              <div class="field">
+                <label for="agency-details">Project or partnership details *</label>
+                <textarea id="agency-details" name="Project or partnership details" required placeholder="Share the scope, skills needed, timeline, and how you would like to collaborate."></textarea>
+              </div>
+              <button class="submit-button" type="submit">CONTINUE IN WHATSAPP ↗</button>
+              <p class="form-note">Your message is prepared on your device. It is not sent until you press Send in WhatsApp.</p>
+              <p class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <div class="footer-brand">RHETORICAL DESIGNS © 2026</div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="index.html">HOME</a>
+        <a href="services.html">SERVICES</a>
+        <a href="portfolio.html">PORTFOLIO</a>
+        <a href="about.html">ABOUT</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+      <div class="footer-contact">DUANE STEFFENS<br>EMAIL <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a><br>WHATSAPP <a href="https://wa.me/27632280179">063 228 0179</a></div>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.whatsapp-form').forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const details = Array.from(new FormData(form).entries())
+          .map(([label, value]) => `${label}: ${value}`)
+          .join('\n');
+        const message = `${form.dataset.formTitle}\n\n${details}`;
+        const status = form.querySelector('.form-status');
+        status.textContent = 'Opening WhatsApp with your draft message…';
+        window.location.assign(`https://wa.me/27632280179?text=${encodeURIComponent(message)}`);
+      });
+    });
+  </script>
+  <script src="hero-particles.js"></script>
+</body>
+</html>

@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABOUT // RHETORICAL DESIGNS</title>
+  <style>
+    :root {
+      --bg-dark: #020307;
+      --bg-surface: #070b14;
+      --card-bg: rgba(6, 9, 18, 0.78);
+      --border-sheen: rgba(0, 240, 255, 0.2);
+      
+      --accent-cyan: #00f0ff;
+      --accent-amber: #ffb703;
+      --accent-magenta: #ff0055;
+      --accent-green: #00ff88;
+      --accent-gold: #e5c07b;
+      --accent-teal: #00e5c9;
+      --accent-orange: #ff7700;
+      
+      --text-main: #f3f6fc;
+      --text-muted: #7e8c9f;
+      --text-dim: #445065;
+      
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      cursor: none;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient CRT Scanline Overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.5;
+    }
+
+    /* Background Ambient Canvas Grid */
+    #ambient-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Interactive Luxury HUD Cursor */
+    #cursor-reticle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent-cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s, opacity 0.3s, background-color 0.2s;
+      mix-blend-mode: difference;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+
+    #cursor-reticle.active { opacity: 1; }
+    #cursor-reticle.hover-link {
+      width: 52px;
+      height: 52px;
+      border-color: var(--accent-teal);
+      background-color: rgba(0, 240, 255, 0.12);
+    }
+
+    #cursor-dot {
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    #cursor-coords {
+      position: absolute;
+      left: 45px;
+      top: -5px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--accent-cyan);
+      white-space: nowrap;
+    }
+
+    /* ====================================================
+       PERSISTENT TOP NAVIGATION BAR
+       ==================================================== */
+    .persistent-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 950;
+      background: rgba(4, 7, 14, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+
+    .persistent-navbar::before {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+    }
+
+    .nav-logo-icon {
+      color: var(--accent-cyan);
+      font-size: 15px;
+    }
+
+    .nav-status-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent-green);
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 4px;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link span {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      border-color: rgba(0, 240, 255, 0.3);
+      background: rgba(0, 240, 255, 0.06);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+    }
+
+    .nav-link.active {
+      color: var(--accent-cyan);
+      border-color: rgba(0, 240, 255, 0.4);
+      background: rgba(0, 240, 255, 0.08);
+    }
+
+    .nav-link-teal {
+      color: var(--accent-teal);
+      border-color: rgba(0, 229, 201, 0.25);
+      background: rgba(0, 229, 201, 0.05);
+    }
+
+    .nav-link-teal:hover {
+      color: #fff;
+      border-color: var(--accent-teal);
+      background: rgba(0, 229, 201, 0.15);
+      box-shadow: 0 0 15px rgba(0, 229, 201, 0.3);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Page Container */
+    .page-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 130px 32px 100px 32px;
+    }
+
+    /* ====================================================
+       HERO / PROFILE MANIFESTO
+       ==================================================== */
+    .about-hero {
+      padding: 30px 0 60px 0;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+      margin-bottom: 60px;
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      min-width: 0;
+    }
+
+    .hero-visual {
+      min-height: 420px;
+      padding: 22px 24px;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(0, 240, 255, 0.12), transparent 42%),
+        linear-gradient(145deg, rgba(0, 240, 255, 0.035), rgba(255, 255, 255, 0.015));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 75%, transparent);
+      pointer-events: none;
+    }
+
+    .hero-visual-top,
+    .hero-visual-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+    }
+
+    .hero-visual-top { color: var(--accent-cyan); }
+
+    .hero-visual-art {
+      min-height: 270px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-orbit {
+      position: absolute;
+      border: 1px solid rgba(0, 240, 255, 0.24);
+      border-radius: 50%;
+      transform: rotate(-24deg);
+    }
+
+    .hero-orbit-outer { width: 250px; height: 170px; }
+    .hero-orbit-middle { width: 205px; height: 205px; border-style: dashed; opacity: 0.7; }
+    .hero-orbit-inner { width: 136px; height: 136px; border-color: rgba(255, 255, 255, 0.16); }
+
+    .hero-mark {
+      color: var(--accent-cyan);
+      font-size: 96px;
+      line-height: 1;
+      text-shadow: 0 0 42px rgba(0, 240, 255, 0.55);
+    }
+
+    .hero-visual-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--text-main);
+    }
+
+    .hero-visual-caption span { color: var(--accent-cyan); }
+
+    .hero-visual-bottom span:last-child {
+      color: var(--text-main);
+      text-align: right;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding: 4px 12px;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .hero-title {
+      font-size: clamp(34px, 5vw, 68px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      margin-bottom: 18px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .manifesto-lead {
+      font-size: clamp(15px, 1.6vw, 19px);
+      line-height: 1.65;
+      color: var(--text-muted);
+      max-width: 820px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .manifesto-quote {
+      padding: 20px 24px;
+      border-left: 2px solid var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.03);
+      border-radius: 0 12px 12px 0;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent-cyan);
+      margin-bottom: 28px;
+      max-width: 780px;
+    }
+
+    .archetype-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .archetype-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-title {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: "//";
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-size: 20px;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.18em;
+    }
+
+    /* ====================================================
+       THREE PILLARS OF PRACTICE (3-COLUMN GRID)
+       ==================================================== */
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-bottom: 100px;
+    }
+
+    .philosophy-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sheen);
+      border-radius: 18px;
+      padding: 36px 30px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+    }
+
+    .specular-sheen {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle 350px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%);
+      opacity: 0.9;
+    }
+
+    .philosophy-card::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: 30px; right: 30px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    }
+
+    .pillar-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--accent-cyan);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .pillar-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    .pillar-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-muted);
+    }
+
+    /* ====================================================
+       TECHNICAL RADAR & STACK MATRIX
+       ==================================================== */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-bottom: 100px;
+    }
+
+    .stack-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 36px;
+      backdrop-filter: blur(20px);
+    }
+
+    .stack-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stack-category {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stack-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.15em;
+    }
+
+    .tech-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tech-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-main);
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s;
+    }
+
+    .tech-chip:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .tech-chip::before {
+      content: "◆";
+      color: var(--accent-cyan);
+      font-size: 8px;
+    }
+
+    /* ====================================================
+       EDITORIAL TIMELINE & MILESTONES
+       ==================================================== */
+    .timeline-wrapper {
+      margin-bottom: 100px;
+    }
+
+    .timeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .timeline-item {
+      background: rgba(6, 9, 18, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 32px;
+      align-items: baseline;
+      transition: all 0.3s;
+    }
+
+    .timeline-item:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 9, 18, 0.85);
+      transform: translateX(6px);
+    }
+
+    .timeline-year {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      letter-spacing: 0.15em;
+    }
+
+    .timeline-content h4 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .timeline-content p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ====================================================
+       CTA DECK / DISPATCH INQUIRY
+       ==================================================== */
+    .about-cta-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sheen);
+      border-radius: 20px;
+      padding: 56px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
+      margin-bottom: 80px;
+    }
+
+    .about-cta-card::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: 60px; right: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.25s ease;
+      cursor: pointer !important;
+    }
+
+    .btn-action-primary {
+      background: var(--accent-cyan);
+      color: #000;
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-action-primary:hover {
+      background: #fff;
+      border-color: #fff;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+    }
+
+    .btn-action-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-action-outline:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      color: var(--accent-cyan);
+    }
+
+    /* Page Footer */
+    .page-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+    }
+
+    .footer-brand { color: #fff; font-weight: 700; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 14px; }
+    .footer-links a, .footer-contact a { color: var(--accent-cyan); text-decoration: none; }
+    .footer-links a:hover, .footer-contact a:hover { color: #fff; }
+    .footer-contact { text-align: right; line-height: 1.8; }
+
+    @media (max-width: 992px) {
+      .about-hero { grid-template-columns: 1fr; gap: 32px; }
+      .hero-visual { min-height: 360px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .stack-grid { grid-template-columns: 1fr; }
+      .timeline-item { grid-template-columns: 1fr; gap: 8px; }
+      .persistent-navbar { height: auto; min-height: 64px; padding: 10px 20px; flex-wrap: wrap; gap: 8px; }
+      .nav-center { display: flex; order: 3; flex: 1 0 100%; justify-content: center; flex-wrap: wrap; gap: 2px; }
+      .nav-link { padding: 5px 8px; }
+    }
+
+    @media (max-width: 640px) {
+      .about-cta-card { padding: 40px 24px; }
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 32px;
+      }
+      .section-title {
+        display: block;
+        font-size: clamp(20px, 5.3vw, 24px);
+        line-height: 1.2;
+      }
+      .section-title::before {
+        display: inline-block;
+        margin-right: 8px;
+        font-size: 13px;
+        vertical-align: middle;
+      }
+      .section-tag {
+        font-size: 8px;
+        line-height: 1.5;
+        letter-spacing: 0.12em;
+      }
+      .page-footer { grid-template-columns: 1fr; gap: 12px; text-align: center; }
+      .footer-links {
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+        font-size: 9px;
+        letter-spacing: 0.06em;
+      }
+      .footer-contact { text-align: center; }
+      .nav-right { display: none; }
+      #cursor-reticle { display: none; }
+      * { cursor: auto; }
+    }
+  </style>
+  <link rel="stylesheet" href="hero-particles.css">
+  <link rel="stylesheet" href="site-header.css">
+  <script src="site-header.js" defer></script>
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Interactive Precision Cursor -->
+  <div id="cursor-reticle">
+    <div id="cursor-dot"></div>
+    <div id="cursor-coords">X:0000 Y:0000</div>
+  </div>
+
+  <!-- Persistent Aerospace Navbar -->
+  <header class="persistent-navbar">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo interactive-link">
+        <img class="nav-logo-image" src="rhetorical-designs-logo.png" alt="Rhetorical Designs">
+      </a>
+    </div>
+
+    <button class="mobile-menu-toggle" type="button" data-mobile-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-center" id="primary-navigation" aria-label="Main navigation">
+      <a href="services.html" class="nav-link interactive-link"><span>01</span>SERVICES</a>
+      <a href="portfolio.html" class="nav-link interactive-link"><span>02</span>PORTFOLIO</a>
+      <a href="about.html" class="nav-link active interactive-link"><span>03</span>ABOUT</a>
+      <a href="contact.html" class="nav-link interactive-link"><span>04</span>CONTACT</a>
+    </nav>
+
+    <div class="nav-right">
+      <a class="whatsapp-cta interactive-link" href="https://wa.me/27632280179" aria-label="Chat with Rhetorical Designs on WhatsApp">
+        <span class="whatsapp-cta-mark" aria-hidden="true">WA</span>
+        <span>WHATSAPP</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="page-container">
+
+    <!-- ====================================================
+         HERO / PROFILE MANIFESTO
+         ==================================================== -->
+    <section id="manifesto" class="about-hero hero-particle-surface">
+      <canvas class="hero-particles" data-hero-particles aria-hidden="true"></canvas>
+      <div class="hero-copy">
+        <div class="hero-eyebrow">// RHETORICAL DESIGNS // BRAND, DESIGN & TECHNOLOGY</div>
+        <h1 class="hero-title">
+          WHERE STRATEGY MEETS <span>DESIGN & CODE.</span>
+        </h1>
+
+        <p class="manifesto-lead">
+          I bring brand strategy, art direction and creative engineering together to turn ideas into distinctive digital experiences—from expressive identities and interfaces to interactive websites and practical AI-powered tools.
+        </p>
+
+        <div class="manifesto-quote">
+          "Strategy gives it meaning. Design gives it character. Technology brings it to life."
+        </div>
+
+        <div class="archetype-tags">
+          <span class="archetype-pill">// BRAND STRATEGY & ART DIRECTION</span>
+          <span class="archetype-pill">// WEB DESIGN & CREATIVE DEVELOPMENT</span>
+          <span class="archetype-pill">// GENERATIVE & INTERACTIVE DESIGN</span>
+          <span class="archetype-pill">// PERFORMANCE-MINDED DIGITAL BUILDS</span>
+          <span class="archetype-pill">// AI & AGENTIC WORKFLOWS</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Rhetorical Designs creative practice">
+        <div class="hero-visual-top">
+          <span>RHETORICAL DESIGNS</span>
+          <span>CREATIVE PRACTICE / 01</span>
+        </div>
+        <div class="hero-visual-art" aria-hidden="true">
+          <div class="hero-orbit hero-orbit-outer"></div>
+          <div class="hero-orbit hero-orbit-middle"></div>
+          <div class="hero-orbit hero-orbit-inner"></div>
+          <div class="hero-mark">❖</div>
+          <div class="hero-visual-caption"><span>STRATEGY</span> × DESIGN × CODE × AI</div>
+        </div>
+        <div class="hero-visual-bottom">
+          <span>THOUGHTFUL BY DESIGN</span>
+          <span>DUANE STEFFENS</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         THREE PILLARS OF PRACTICE
+         ==================================================== -->
+    <section style="margin-bottom: 100px;">
+      <div class="section-header">
+        <h2 class="section-title">Core Operating Philosophy</h2>
+        <span class="section-tag">[ MANIFESTO // 03 PILLARS ]</span>
+      </div>
+
+      <div class="philosophy-grid">
+        
+        <div class="philosophy-card card-tilt">
+          <div class="specular-sheen"></div>
+          <div>
+            <span class="pillar-num">// PILLAR 01 // FOUNDATION</span>
+            <h3 class="pillar-title">Design With Math</h3>
+            <p class="pillar-desc">
+              Every curve, motion curve, and spatial transform is rooted in mathematical rigor—trigonometry, procedural noise algorithms, and harmonic grid ratios that bring systemic order to creative chaos.
+            </p>
+          </div>
+        </div>
+
+        <div class="philosophy-card card-tilt">
+          <div class="specular-sheen"></div>
+          <div>
+            <span class="pillar-num" style="color: var(--accent-magenta);">// PILLAR 02 // EMOTION</span>
+            <h3 class="pillar-title">Craft With Emotion</h3>
+            <p class="pillar-desc">
+              Technology without soul is sterile. We engineer tactile micro-interactions, kinetic letterforms, glassmorphism lighting, and sensory depth that provoke wonder and memorability.
+            </p>
+          </div>
+        </div>
+
+        <div class="philosophy-card card-tilt">
+          <div class="specular-sheen"></div>
+          <div>
+            <span class="pillar-num" style="color: var(--accent-green);">// PILLAR 03 // VELOCITY</span>
+            <h3 class="pillar-title">Optimize For Medium</h3>
+            <p class="pillar-desc">
+              Zero tolerance for monolithic drag or bloated runtime libraries. Everything is tailored directly for GPU matrix acceleration, sub-100ms Core Vitals, and smooth 120fps frame budgets.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         TECHNICAL MASTERY & STACK RADAR
+         ==================================================== -->
+    <section id="stack" style="margin-bottom: 100px;">
+      <div class="section-header">
+        <h2 class="section-title">Technical Mastery & Stack</h2>
+        <span class="section-tag">[ CAPABILITIES // FULL MATRIX ]</span>
+      </div>
+
+      <div class="stack-grid">
+
+        <!-- Stack Box 01 -->
+        <div class="stack-card">
+          <div class="stack-header">
+            <h3 class="stack-category">Creative Coding & Shaders</h3>
+            <span class="stack-tag">// GRAPHICS</span>
+          </div>
+          <div class="tech-chips">
+            <span class="tech-chip">WebGL / WebGPU</span>
+            <span class="tech-chip">Three.js / R3F</span>
+            <span class="tech-chip">GLSL Shaders</span>
+            <span class="tech-chip">HTML5 Canvas API</span>
+            <span class="tech-chip">Raymarching</span>
+            <span class="tech-chip">Particle Simulations</span>
+            <span class="tech-chip">Procedural Textures</span>
+          </div>
+        </div>
+
+        <!-- Stack Box 02 -->
+        <div class="stack-card">
+          <div class="stack-header">
+            <h3 class="stack-category">Spatial UI & Kinetic Web</h3>
+            <span class="stack-tag">// INTERACTION</span>
+          </div>
+          <div class="tech-chips">
+            <span class="tech-chip">GSAP / ScrollTrigger</span>
+            <span class="tech-chip">Framer Motion</span>
+            <span class="tech-chip">CSS Houdini</span>
+            <span class="tech-chip">Kinetic Typography</span>
+            <span class="tech-chip">Lenis Smooth Scroll</span>
+            <span class="tech-chip">SVG Matrix Morphing</span>
+            <span class="tech-chip">120fps UI Physics</span>
+          </div>
+        </div>
+
+        <!-- Stack Box 03 -->
+        <div class="stack-card">
+          <div class="stack-header">
+            <h3 class="stack-category">Full-Stack & Agentic Cloud</h3>
+            <span class="stack-tag">// BACKEND & AI</span>
+          </div>
+          <div class="tech-chips">
+            <span class="tech-chip">TypeScript / Node.js</span>
+            <span class="tech-chip">Python LLM Swarms</span>
+            <span class="tech-chip">Local Model Inference</span>
+            <span class="tech-chip">Caddy / Nginx Proxies</span>
+            <span class="tech-chip">Docker Containers</span>
+            <span class="tech-chip">Autonomous Task Runners</span>
+            <span class="tech-chip">Zero-Bloat APIs</span>
+          </div>
+        </div>
+
+        <!-- Stack Box 04 -->
+        <div class="stack-card">
+          <div class="stack-header">
+            <h3 class="stack-category">Design Craft & Art Direction</h3>
+            <span class="stack-tag">// DIRECTION</span>
+          </div>
+          <div class="tech-chips">
+            <span class="tech-chip">Generative Dynamic Branding</span>
+            <span class="tech-chip">Experimental Editorial UX</span>
+            <span class="tech-chip">Dark Luxury Aesthetics</span>
+            <span class="tech-chip">Design Token Architecture</span>
+            <span class="tech-chip">Web Audio API Synthesis</span>
+            <span class="tech-chip">Accessibility Compliance</span>
+            <span class="tech-chip">Design Systems</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         TIMELINE & MILESTONES
+         ==================================================== -->
+    <section id="milestones" class="timeline-wrapper">
+      <div class="section-header">
+        <h2 class="section-title">Milestones & Trajectory</h2>
+        <span class="section-tag">[ CHRONOLOGY // TRACK RECORD ]</span>
+      </div>
+
+      <div class="timeline-list">
+        
+        <div class="timeline-item">
+          <div class="timeline-year">// 2026+</div>
+          <div class="timeline-content">
+            <h4>Autonomous Spatial Digital Ecosystems</h4>
+            <p>Pioneering the synthesis of multi-agent LLM intelligence swarms with real-time WebGL spatial canvas interfaces for enterprise clients worldwide.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">// 2024 - 2025</div>
+          <div class="timeline-content">
+            <h4>High-Frequency Web Architecture & Shaders</h4>
+            <p>Architected custom zero-bloat web engines delivering sub-100ms Core Vitals, bespoke raymarched shader simulations, and luxury dynamic brand identities.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">// 2022 - 2023</div>
+          <div class="timeline-content">
+            <h4>Global Agency Creative Technology Partner</h4>
+            <p>Served as specialist lead creative technologist for top-tier digital agencies, delivering award-caliber interactive web platforms and bespoke 3D visualizers.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         CALL TO ACTION / INITIATE DISPATCH
+         ==================================================== -->
+    <section class="about-cta-card">
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cyan); letter-spacing: 0.2em; display: block; margin-bottom: 16px;">// COLLABORATION DISPATCH</span>
+      <h2 style="font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; color: #fff;">
+        READY TO BUILD SOMETHING REVOLUTIONARY?
+      </h2>
+      <p style="color: var(--text-muted); font-size: 16px; max-width: 640px; margin: 0 auto 36px auto; line-height: 1.7;">
+        Whether you are commissioning a bespoke flagship platform, hiring specialized creative engineering for a sprint, or integrating autonomous intelligence.
+      </p>
+
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="contact.html#client-contact" class="btn-action btn-action-primary interactive-link">START A PROJECT INQUIRY ↗</a>
+        <a href="services.html" class="btn-action btn-action-outline interactive-link">VIEW FULL CAPABILITIES</a>
+      </div>
+    </section>
+
+    <!-- Page Footer -->
+    <footer class="page-footer">
+      <div class="footer-brand">RHETORICAL DESIGNS © 2026</div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="index.html">HOME</a>
+        <a href="services.html">SERVICES</a>
+        <a href="portfolio.html">PORTFOLIO</a>
+        <a href="about.html">ABOUT</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+      <div class="footer-contact">DUANE STEFFENS<br>EMAIL <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a><br>WHATSAPP <a href="https://wa.me/27632280179">063 228 0179</a></div>
+    </footer>
+
+  </main>
+
+  <script>
+    /* ==========================================================================
+       1. AMBIENT CONNECTED CONSTELLATION CANVAS
+       ========================================================================== */
+    const canvas = document.getElementById('ambient-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const particles = Array.from({ length: 65 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 1.5 + 0.5
+    }));
+
+    function renderCanvas() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.35)';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 140) {
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 * (1 - dist / 140)})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(renderCanvas);
+    }
+    renderCanvas();
+
+    /* ==========================================================================
+       2. 3D GYROSCOPIC TILT & SPECULAR SHEEN
+       ========================================================================== */
+    const tiltCards = document.querySelectorAll('.card-tilt');
+    const reticle = document.getElementById('cursor-reticle');
+    const coords = document.getElementById('cursor-coords');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      reticle.classList.add('active');
+      reticle.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      coords.innerText = `X:${Math.round(mouseX).toString().padStart(4, '0')} Y:${Math.round(mouseY).toString().padStart(4, '0')}`;
+
+      tiltCards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          const cardX = mouseX - rect.left;
+          const cardY = mouseY - rect.top;
+          const pctX = (cardX / rect.width) * 100;
+          const pctY = (cardY / rect.height) * 100;
+
+          card.style.setProperty('--mouse-x', `${pctX}%`);
+          card.style.setProperty('--mouse-y', `${pctY}%`);
+
+          const rotX = ((cardY / rect.height) - 0.5) * -10;
+          const rotY = ((cardX / rect.width) - 0.5) * 10;
+          card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.01, 1.01, 1.01)`;
+        } else {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        }
+      });
+    });
+
+    document.querySelectorAll('.interactive-link, .philosophy-card, .stack-card, .timeline-item, .tech-chip').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        reticle.classList.add('hover-link');
+      });
+      item.addEventListener('mouseleave', () => {
+        reticle.classList.remove('hover-link');
+      });
+    });
+  </script>
+  <script src="hero-particles.js"></script>
+</body>
+</html>
