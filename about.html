@@ -645,6 +645,14 @@
       margin-bottom: 80px;
     }
 
+    .about-cta-title {
+      font-size: clamp(30px, 4vw, 54px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
     .about-cta-card::before {
       content: "";
       position: absolute;
@@ -726,7 +734,13 @@
     }
 
     @media (max-width: 640px) {
-      .about-cta-card { padding: 40px 24px; }
+      .page-container { padding-right: 20px; padding-left: 20px; }
+      .about-cta-card { padding: 40px 20px; }
+      .about-cta-title {
+        font-size: clamp(22px, 7vw, 30px);
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+      }
       .section-header {
         flex-direction: column;
         align-items: flex-start;
@@ -802,7 +816,6 @@
 
     <div class="nav-right">
       <a class="whatsapp-cta interactive-link" href="https://wa.me/27632280179" aria-label="Chat with Rhetorical Designs on WhatsApp">
-        <span class="whatsapp-cta-mark" aria-hidden="true">WA</span>
         <span>WHATSAPP</span>
         <span aria-hidden="true">↗</span>
       </a>
@@ -1027,7 +1040,7 @@
          ==================================================== -->
     <section class="about-cta-card">
       <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cyan); letter-spacing: 0.2em; display: block; margin-bottom: 16px;">// COLLABORATION DISPATCH</span>
-      <h2 style="font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; color: #fff;">
+      <h2 class="about-cta-title">
         READY TO BUILD SOMETHING REVOLUTIONARY?
       </h2>
       <p style="color: var(--text-muted); font-size: 16px; max-width: 640px; margin: 0 auto 36px auto; line-height: 1.7;">

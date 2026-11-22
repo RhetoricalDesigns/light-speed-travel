@@ -101,19 +101,10 @@
   outline-offset: 3px;
 }
 
-.whatsapp-cta-mark {
-  display: grid;
-  width: 22px;
-  height: 22px;
-  place-items: center;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: 8px;
-  letter-spacing: 0;
-}
-
 @media (max-width: 960px) {
   .persistent-navbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     height: auto;
     min-height: 72px;
     gap: 8px;
@@ -121,7 +112,9 @@
   }
 
   .nav-left {
-    order: 0;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
     min-width: 0;
   }
 
@@ -135,20 +128,25 @@
 
   .mobile-menu-toggle {
     display: inline-flex;
-    order: 1;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
   }
 
   .nav-right {
     display: flex !important;
-    order: 2;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
     margin-left: 0;
   }
 
   .nav-center {
+    grid-column: 1 / -1;
+    grid-row: 2;
     position: static;
     inset: auto;
     transform: none;
-    order: 3;
     display: none !important;
     flex: 1 0 100%;
     width: 100%;
@@ -206,8 +204,4 @@
     padding-left: 8px;
   }
 
-  .whatsapp-cta-mark {
-    width: 20px;
-    height: 20px;
-  }
 }

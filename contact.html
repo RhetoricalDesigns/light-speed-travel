@@ -131,7 +131,7 @@
     }
     .contact-highlights {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
       margin-top: 34px;
     }
@@ -259,6 +259,7 @@
       .nav-center { order: 3; flex: 1 0 100%; justify-content: center; flex-wrap: wrap; gap: 2px; }
       .nav-link { padding: 5px 8px; }
       .nav-right { margin-left: auto; }
+      .contact-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .contact-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
@@ -313,7 +314,6 @@
     </nav>
     <div class="nav-right">
       <a class="whatsapp-cta" href="https://wa.me/27632280179" aria-label="Chat with Rhetorical Designs on WhatsApp">
-        <span class="whatsapp-cta-mark" aria-hidden="true">WA</span>
         <span>WHATSAPP</span>
         <span aria-hidden="true">↗</span>
       </a>
@@ -325,19 +325,23 @@
       <canvas class="hero-particles" data-hero-particles aria-hidden="true"></canvas>
       <div class="eyebrow">// CONTACT // START A CONVERSATION</div>
       <h1>Good work starts with a <span>clear conversation.</span></h1>
-      <p class="hero-copy">Tell Duane what you are building, where you need support, and what success looks like. Choose the form that best fits your project and your message will open in WhatsApp, ready for you to review and send.</p>
+      <p class="hero-copy">Tell Duane what you are building, where you need support, and what success looks like. Choose the form that best fits your project and your message will open as an email draft for you to review and send.</p>
       <div class="contact-highlights">
         <div class="highlight">
           <span class="highlight-label">// YOUR CONTACT</span>
           <strong>Duane Steffens</strong>
         </div>
         <div class="highlight">
-          <span class="highlight-label">// PREFERRED CHANNEL</span>
-          <a href="https://wa.me/27632280179">WhatsApp 063 228 0179 ↗</a>
+          <span class="highlight-label">// EMAIL</span>
+          <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a>
         </div>
         <div class="highlight">
-          <span class="highlight-label">// WHO THIS IS FOR</span>
-          <strong>Businesses, brands & agencies</strong>
+          <span class="highlight-label">// WHATSAPP</span>
+          <a href="https://wa.me/27632280179">063 228 0179 ↗</a>
+        </div>
+        <div class="highlight">
+          <span class="highlight-label">// TELEPHONE</span>
+          <a href="tel:+27632280179">063 228 0179 ↗</a>
         </div>
       </div>
     </section>
@@ -346,7 +350,7 @@
       <div class="forms-heading">
         <div class="eyebrow">// PROJECT INQUIRIES</div>
         <h2 id="forms-title">Choose your starting point</h2>
-        <p>Each form asks for the details most useful to that kind of collaboration. You can edit the message in WhatsApp before sending it.</p>
+        <p>Each form asks for the details most useful to that kind of collaboration. Your message opens as a draft in your email app so you can review and send it.</p>
       </div>
 
       <div class="contact-grid">
@@ -354,7 +358,7 @@
           <div class="form-kicker">// 01 — DIRECT PROJECT</div>
           <h3 id="client-form-title">Client Contact Form</h3>
           <p class="form-intro">For business owners, founders, and teams looking for a new website, digital product, redesign, or ongoing support.</p>
-          <form class="whatsapp-form" data-form-title="Client project inquiry">
+          <form class="email-form" data-form-title="Client project inquiry">
             <div class="form-fields">
               <div class="field-row">
                 <div class="field">
@@ -405,8 +409,8 @@
                 <label for="client-details">Tell us about your project *</label>
                 <textarea id="client-details" name="Project details" required placeholder="What are you hoping to achieve? Include any useful links, requirements, or questions."></textarea>
               </div>
-              <button class="submit-button" type="submit">CONTINUE IN WHATSAPP ↗</button>
-              <p class="form-note">Your message is prepared on your device. It is not sent until you press Send in WhatsApp.</p>
+              <button class="submit-button" type="submit">CONTINUE BY EMAIL ↗</button>
+              <p class="form-note">Your email draft opens in your email app. It is not sent until you press Send.</p>
               <p class="form-status" role="status" aria-live="polite"></p>
             </div>
           </form>
@@ -416,7 +420,7 @@
           <div class="form-kicker" style="color: var(--accent-orange);">// 02 — CREATIVE PARTNERSHIP</div>
           <h3 id="agency-form-title">Agency Contact Form</h3>
           <p class="form-intro">For agencies and studios seeking a reliable design and development partner for white-label work, overflow, or specialist builds.</p>
-          <form class="whatsapp-form" data-form-title="Agency partnership inquiry">
+          <form class="email-form" data-form-title="Agency partnership inquiry">
             <div class="form-fields">
               <div class="field-row">
                 <div class="field">
@@ -461,8 +465,8 @@
                 <label for="agency-details">Project or partnership details *</label>
                 <textarea id="agency-details" name="Project or partnership details" required placeholder="Share the scope, skills needed, timeline, and how you would like to collaborate."></textarea>
               </div>
-              <button class="submit-button" type="submit">CONTINUE IN WHATSAPP ↗</button>
-              <p class="form-note">Your message is prepared on your device. It is not sent until you press Send in WhatsApp.</p>
+              <button class="submit-button" type="submit">CONTINUE BY EMAIL ↗</button>
+              <p class="form-note">Your email draft opens in your email app. It is not sent until you press Send.</p>
               <p class="form-status" role="status" aria-live="polite"></p>
             </div>
           </form>
@@ -479,21 +483,22 @@
         <a href="about.html">ABOUT</a>
         <a href="contact.html">CONTACT</a>
       </nav>
-      <div class="footer-contact">DUANE STEFFENS<br>EMAIL <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a><br>WHATSAPP <a href="https://wa.me/27632280179">063 228 0179</a></div>
+      <div class="footer-contact">DUANE STEFFENS<br>EMAIL <a href="mailto:duanesteffens@gmail.com">duanesteffens@gmail.com</a><br>WHATSAPP <a href="https://wa.me/27632280179">063 228 0179</a><br>TEL <a href="tel:+27632280179">063 228 0179</a></div>
     </footer>
   </main>
 
   <script>
-    document.querySelectorAll('.whatsapp-form').forEach((form) => {
+    document.querySelectorAll('.email-form').forEach((form) => {
       form.addEventListener('submit', (event) => {
         event.preventDefault();
         const details = Array.from(new FormData(form).entries())
           .map(([label, value]) => `${label}: ${value}`)
           .join('\n');
-        const message = `${form.dataset.formTitle}\n\n${details}`;
+        const subject = `${form.dataset.formTitle} - Rhetorical Designs`;
+        const body = `${form.dataset.formTitle}\n\n${details}`;
         const status = form.querySelector('.form-status');
-        status.textContent = 'Opening WhatsApp with your draft message…';
-        window.location.assign(`https://wa.me/27632280179?text=${encodeURIComponent(message)}`);
+        status.textContent = 'Opening your email app with a draft...';
+        window.location.assign(`mailto:duanesteffens@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
       });
     });
   </script>
